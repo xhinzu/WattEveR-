@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useApp } from '../../context/AppContext';
 import { Sliders, Wind, Snowflake, Tv, Disc, Fan, Save, Check } from 'lucide-react';
+import { playButtonClick } from '../../utils/sounds';
 
 const DEVICE_ICONS = {
   ac: Wind,
@@ -46,6 +47,7 @@ export default function Limits() {
   };
 
   const handleSaveLimit = async (deviceId) => {
+    playButtonClick();
     setSavingState(prev => ({ ...prev, [deviceId]: 'saving' }));
     try {
       await setDeviceLimit(deviceId, limits[deviceId]);

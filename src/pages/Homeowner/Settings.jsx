@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { useApp } from '../../context/AppContext';
 import { Settings as SettingsIcon, IndianRupee, Save, Check, User, MapPin, Mail, Activity, History, Sun, Moon } from 'lucide-react';
+import { playButtonClick } from '../../utils/sounds';
 
 export default function Settings() {
   const { homeownerData, setBudget, theme, toggleTheme } = useApp();
@@ -17,6 +18,7 @@ export default function Settings() {
 
   const handleSaveBudget = async (e) => {
     e.preventDefault();
+    playButtonClick();
     setSaving(true);
     setSaved(false);
     try {
@@ -50,7 +52,7 @@ export default function Settings() {
         </div>
 
         <button 
-          onClick={toggleTheme}
+          onClick={() => { playButtonClick(); toggleTheme(); }}
           className="focus:outline-none cursor-pointer p-1 relative flex items-center"
           aria-label="Toggle Theme"
         >

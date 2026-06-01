@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { useApp } from '../../context/AppContext';
 import { Shield, Mail, Lock, Home, ArrowRight, AlertCircle } from 'lucide-react';
+import { playButtonClick } from '../../utils/sounds';
 
 export default function WorkerLogin() {
   const { loginUser } = useApp();
@@ -13,6 +14,7 @@ export default function WorkerLogin() {
 
   const handleLogin = async (e) => {
     e.preventDefault();
+    playButtonClick();
     if (!email || !password) {
       setError('Please fill in all fields');
       return;
@@ -35,6 +37,7 @@ export default function WorkerLogin() {
   };
 
   const handleQuickLogin = async () => {
+    playButtonClick();
     setLoading(true);
     setError('');
     try {
@@ -141,6 +144,7 @@ export default function WorkerLogin() {
         <div className="mt-6 pt-4 border-t border-slate-200 dark:border-white/5 flex justify-center text-xs">
           <Link 
             to="/login" 
+            onClick={playButtonClick}
             className="text-slate-500 dark:text-slate-400 hover:text-blue-600 dark:hover:text-blue-400 flex items-center space-x-1 transition font-medium"
           >
             <Home className="w-3.5 h-3.5" />

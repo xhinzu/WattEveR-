@@ -1,19 +1,40 @@
-import React from 'react';
+import React, { useEffect, useRef } from 'react';
 import { NavLink, Outlet, useNavigate } from 'react-router-dom';
 import { useApp } from '../context/AppContext';
 import { Zap, BarChart2, Sliders, Bell, Settings, LogOut, AlertTriangle } from 'lucide-react';
+import { playButtonClick, playAlert } from '../utils/sounds';
 
 export default function HomeownerLayout() {
   const { currentUser, homeownerData, liveData, alerts, logoutUser } = useApp();
   const navigate = useNavigate();
 
   const handleLogout = async () => {
+    playButtonClick();
     await logoutUser();
     navigate('/login');
   };
 
   const activeAlertsCount = alerts.length;
   const isAnomaly = homeownerData?.anomalyFlagged;
+
+  // Sound trigger for new limit exceeded alerts
+  const prevLimitExceededCountRef = useRef(-1);
+  useEffect(() => {
+    if (!currentUser) {
+      prevLimitExceededCountRef.current = -1;
+      return;
+    }
+    const limitExceededAlerts = alerts.filter(a => a.type === 'limit_exceeded');
+    const currentCount = limitExceededAlerts.length;
+    if (prevLimitExceededCountRef.current === -1) {
+      prevLimitExceededCountRef.current = currentCount;
+    } else if (currentCount > prevLimitExceededCountRef.current) {
+      playAlert();
+      prevLimitExceededCountRef.current = currentCount;
+    } else {
+      prevLimitExceededCountRef.current = currentCount;
+    }
+  }, [alerts, currentUser]);
 
   return (
     <div className="min-h-screen bg-slate-100 dark:bg-[#070b13] text-[#111827] dark:text-slate-100 flex justify-center selection:bg-cyan-500/30">
@@ -81,6 +102,7 @@ export default function HomeownerLayout() {
           <NavLink 
             to="/dashboard" 
             end
+            onClick={playButtonClick}
             className={({ isActive }) => 
               `flex flex-col items-center space-y-1 transition-all ${
                 isActive ? 'text-cyan-600 dark:text-cyan-400 scale-105 font-semibold' : 'text-slate-500 dark:text-slate-400 hover:text-slate-800 dark:hover:text-slate-200'
@@ -93,6 +115,7 @@ export default function HomeownerLayout() {
 
           <NavLink 
             to="/dashboard/usage" 
+            onClick={playButtonClick}
             className={({ isActive }) => 
               `flex flex-col items-center space-y-1 transition-all ${
                 isActive ? 'text-cyan-600 dark:text-cyan-400 scale-105 font-semibold' : 'text-slate-500 dark:text-slate-400 hover:text-slate-800 dark:hover:text-slate-200'
@@ -105,6 +128,7 @@ export default function HomeownerLayout() {
 
           <NavLink 
             to="/dashboard/limits" 
+            onClick={playButtonClick}
             className={({ isActive }) => 
               `flex flex-col items-center space-y-1 transition-all ${
                 isActive ? 'text-cyan-600 dark:text-cyan-400 scale-105 font-semibold' : 'text-slate-500 dark:text-slate-400 hover:text-slate-800 dark:hover:text-slate-200'
@@ -117,6 +141,7 @@ export default function HomeownerLayout() {
 
           <NavLink 
             to="/dashboard/alerts" 
+            onClick={playButtonClick}
             className={({ isActive }) => 
               `flex flex-col items-center space-y-1 transition-all relative ${
                 isActive ? 'text-cyan-600 dark:text-cyan-400 scale-105 font-semibold' : 'text-slate-500 dark:text-slate-400 hover:text-slate-800 dark:hover:text-slate-200'
@@ -134,6 +159,7 @@ export default function HomeownerLayout() {
 
           <NavLink 
             to="/dashboard/settings" 
+            onClick={playButtonClick}
             className={({ isActive }) => 
               `flex flex-col items-center space-y-1 transition-all ${
                 isActive ? 'text-cyan-600 dark:text-cyan-400 scale-105 font-semibold' : 'text-slate-500 dark:text-slate-400 hover:text-slate-800 dark:hover:text-slate-200'

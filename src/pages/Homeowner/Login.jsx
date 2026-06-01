@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { useApp } from '../../context/AppContext';
 import { Mail, Lock, AlertCircle } from 'lucide-react';
+import { playButtonClick } from '../../utils/sounds';
 
 export default function Login() {
   const { loginUser } = useApp();
@@ -13,6 +14,7 @@ export default function Login() {
 
   const handleLogin = async (e) => {
     e.preventDefault();
+    playButtonClick();
     if (!email || !password) {
       setError('Please fill in all fields');
       return;
@@ -46,6 +48,7 @@ export default function Login() {
   ];
 
   const handleQuickLogin = async (acc) => {
+    playButtonClick();
     setLoading(true);
     setError('');
     try {

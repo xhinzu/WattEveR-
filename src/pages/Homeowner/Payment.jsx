@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { useApp } from '../../context/AppContext';
 import { CreditCard, Smartphone, Landmark, IndianRupee, ArrowLeft, CheckCircle, FileDown, History } from 'lucide-react';
+import { playButtonClick, playPaymentSuccess } from '../../utils/sounds';
 
 export default function Payment() {
   const { liveData, homeownerData, payBill } = useApp();
@@ -27,6 +28,7 @@ export default function Payment() {
     e.preventDefault();
     if (amountDue <= 0) return;
 
+    playButtonClick();
     setLoading(true);
     try {
       let methodLabel = "Card";
@@ -34,6 +36,7 @@ export default function Payment() {
       if (method === 'netbank') methodLabel = `Net Banking (${bank})`;
 
       const result = await payBill(amountDue, methodLabel);
+      playPaymentSuccess();
       setPaymentSuccess({
         amount: amountDue,
         transactionId: result.transactionId,
@@ -49,6 +52,7 @@ export default function Payment() {
   };
 
   const handleDownloadReceipt = () => {
+    playButtonClick();
     if (!paymentSuccess) return;
     const receiptText = `
 =========================================
@@ -121,6 +125,7 @@ Thank you for using WattEveR Smart Grid!
             </button>
             <Link
               to="/payment/history"
+              onClick={playButtonClick}
               className="py-2.5 rounded-lg bg-slate-200 dark:bg-slate-800 hover:bg-slate-300 dark:hover:bg-slate-700 text-slate-800 dark:text-slate-200 border border-slate-300 dark:border-white/5 font-bold text-xs flex items-center justify-center space-x-1 transition"
             >
               <History className="w-4 h-4" />
@@ -131,6 +136,7 @@ Thank you for using WattEveR Smart Grid!
 
         <Link
           to="/dashboard"
+          onClick={playButtonClick}
           className="block w-full py-2.5 rounded-lg bg-cyan-500 hover:bg-cyan-600 text-[#070b13] font-bold text-sm text-center transition shadow-lg shadow-cyan-500/10"
         >
           Return to Dashboard
@@ -146,6 +152,7 @@ Thank you for using WattEveR Smart Grid!
       <div className="flex items-center space-x-2.5">
         <Link 
           to="/dashboard/usage" 
+          onClick={playButtonClick}
           className="p-1.5 rounded-lg bg-slate-100 dark:bg-white/5 border border-slate-200 dark:border-white/5 text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 transition"
         >
           <ArrowLeft className="w-4 h-4" />
@@ -202,19 +209,19 @@ Thank you for using WattEveR Smart Grid!
           {/* Method Selector Tabs */}
           <div className="grid grid-cols-3 gap-2 bg-slate-100 dark:bg-slate-900 p-1.5 rounded-lg border border-slate-200 dark:border-white/5 text-xs text-center font-bold">
             <button
-              onClick={() => setMethod('card')}
+              onClick={() => { playButtonClick(); setMethod('card'); }}
               className={`py-2 rounded-md transition ${method === 'card' ? 'bg-cyan-500 text-[#070b13]' : 'text-slate-500 dark:text-slate-400 hover:text-slate-800 dark:hover:text-slate-200'}`}
             >
               Card
             </button>
             <button
-              onClick={() => setMethod('upi')}
+              onClick={() => { playButtonClick(); setMethod('upi'); }}
               className={`py-2 rounded-md transition ${method === 'upi' ? 'bg-cyan-500 text-[#070b13]' : 'text-slate-500 dark:text-slate-400 hover:text-slate-800 dark:hover:text-slate-200'}`}
             >
               UPI
             </button>
             <button
-              onClick={() => setMethod('netbank')}
+              onClick={() => { playButtonClick(); setMethod('netbank'); }}
               className={`py-2 rounded-md transition ${method === 'netbank' ? 'bg-cyan-500 text-[#070b13]' : 'text-slate-500 dark:text-slate-400 hover:text-slate-800 dark:hover:text-slate-200'}`}
             >
               Net

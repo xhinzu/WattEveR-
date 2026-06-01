@@ -1,6 +1,7 @@
 import React from 'react';
 import { useApp } from '../../context/AppContext';
 import { Wind, Snowflake, Tv, Disc, Fan, AlertTriangle, ToggleLeft, ToggleRight, Zap } from 'lucide-react';
+import { playToggleOn, playToggleOff } from '../../utils/sounds';
 
 const DEVICE_ICONS = {
   ac: Wind,
@@ -35,6 +36,11 @@ export default function Dashboard() {
 
   const handleDeviceToggle = async (deviceId) => {
     const nextStatus = !statuses[deviceId];
+    if (nextStatus) {
+      playToggleOn();
+    } else {
+      playToggleOff();
+    }
     await toggleDevice(deviceId, nextStatus);
   };
 
