@@ -22,11 +22,13 @@ export default function HomeownerLayout() {
         
         {/* Top Header */}
         <header className="sticky top-0 z-40 bg-white/80 dark:bg-[#0b0f19]/80 backdrop-blur-md border-b border-slate-200 dark:border-white/5 px-5 py-4 flex items-center justify-between">
-          <div className="flex items-center space-x-2.5">
-            <img src="/logo.png" alt="WattEveR Logo" className="w-9 h-9 object-contain rounded-lg shadow-sm border border-slate-200 dark:border-white/10" />
+          <div className="flex items-center space-x-2">
+            <div className="w-8 h-8 rounded-lg bg-cyan-500/10 dark:bg-cyan-500/20 border border-cyan-500/20 dark:border-cyan-500/30 flex items-center justify-center text-cyan-500 dark:text-cyan-400">
+              <Zap className="w-4 h-4 fill-cyan-500/20 dark:fill-cyan-400/20" />
+            </div>
             <div>
-              <h1 className="text-xs text-slate-500 dark:text-slate-400 font-bold leading-none">WattEveR</h1>
-              <h2 className="text-[11px] font-semibold text-slate-850 dark:text-slate-200 mt-0.5 leading-none">
+              <h1 className="text-xs text-slate-500 dark:text-slate-400 font-medium">WattEveR</h1>
+              <h2 className="text-sm font-bold text-slate-800 dark:text-slate-200 tracking-tight leading-none">
                 {homeownerData?.name || currentUser?.name || 'Loading...'}
               </h2>
             </div>

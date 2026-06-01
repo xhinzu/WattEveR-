@@ -53,7 +53,9 @@ export default function WorkerLogin() {
         
         {/* Header */}
         <div className="flex flex-col items-center text-center mt-2 mb-6">
-          <img src="/logo.png" alt="WattEveR Logo" className="w-24 h-24 object-contain rounded-xl shadow-md border border-slate-200 dark:border-white/5" />
+          <div className="w-12 h-12 rounded-xl bg-blue-600 flex items-center justify-center text-white shadow-lg shadow-blue-500/10">
+            <Shield className="w-6 h-6" />
+          </div>
           <h2 className="text-xl font-extrabold mt-3 tracking-tight text-slate-900 dark:text-slate-100">
             WattEveR Grid Portal
           </h2>

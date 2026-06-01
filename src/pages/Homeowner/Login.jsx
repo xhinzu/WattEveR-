@@ -67,8 +67,13 @@ export default function Login() {
         
         {/* Header */}
         <div className="flex flex-col items-center text-center mt-2 mb-6">
-          <img src="/logo.png" alt="WattEveR Logo" className="w-24 h-24 object-contain rounded-xl shadow-md border border-slate-200 dark:border-white/5" />
-          <p className="text-xs text-slate-500 dark:text-slate-400 mt-2 font-medium">Energy tracking for homeowners</p>
+          <div className="w-12 h-12 rounded-xl bg-gradient-to-tr from-cyan-500 to-teal-400 flex items-center justify-center text-[#070b13] shadow-lg shadow-cyan-500/20">
+            <Zap className="w-6 h-6 fill-current" />
+          </div>
+          <h2 className="text-xl font-extrabold mt-3 tracking-tight text-transparent bg-clip-text bg-gradient-to-r from-cyan-600 to-teal-500 dark:from-cyan-400 dark:to-teal-200">
+            WattEveR
+          </h2>
+          <p className="text-xs text-slate-500 dark:text-slate-400 mt-1">WattEveR energy tracking for homeowners</p>
         </div>
 
         {/* Error Alert */}
