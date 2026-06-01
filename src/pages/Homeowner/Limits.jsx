@@ -64,15 +64,15 @@ export default function Limits() {
       
       {/* Title */}
       <div>
-        <h2 className="text-lg font-bold text-slate-100 flex items-center space-x-2">
-          <Sliders className="w-5 h-5 text-cyan-400" />
+        <h2 className="text-lg font-bold text-slate-900 dark:text-slate-100 flex items-center space-x-2">
+          <Sliders className="w-5 h-5 text-cyan-500 dark:text-cyan-400" />
           <span>Wattage Limits</span>
         </h2>
-        <p className="text-xs text-slate-400">Configure alert thresholds for each appliance</p>
+        <p className="text-xs text-slate-500 dark:text-slate-400">Configure alert thresholds for each appliance</p>
       </div>
 
       {/* Info Warning */}
-      <div className="p-3 rounded-lg bg-cyan-950/20 border border-cyan-800/25 text-[11px] text-slate-300">
+      <div className="p-3 rounded-lg bg-cyan-50 dark:bg-cyan-950/20 border border-cyan-200 dark:border-cyan-800/25 text-[11px] text-slate-700 dark:text-slate-300">
         When an active device's live wattage draws more than its set limit, a warning alert will instantly be recorded.
       </div>
 
@@ -86,15 +86,15 @@ export default function Limits() {
           const state = savingState[deviceId] || 'idle';
 
           return (
-            <div key={deviceId} className="p-4 rounded-xl bg-slate-900/40 border border-white/5 space-y-3">
+            <div key={deviceId} className="p-4 rounded-xl bg-[#f3f4f6] dark:bg-slate-900/40 border border-slate-200 dark:border-white/5 space-y-3">
               
               {/* Header */}
               <div className="flex justify-between items-center">
                 <div className="flex items-center space-x-2.5">
-                  <div className="w-8 h-8 rounded-lg bg-slate-800 flex items-center justify-center text-slate-300">
+                  <div className="w-8 h-8 rounded-lg bg-slate-200 dark:bg-slate-800 flex items-center justify-center text-slate-600 dark:text-slate-300">
                     <Icon className="w-4.5 h-4.5" />
                   </div>
-                  <h4 className="text-xs font-bold text-slate-200">{name}</h4>
+                  <h4 className="text-xs font-bold text-slate-800 dark:text-slate-200">{name}</h4>
                 </div>
 
                 <div className="flex items-center space-x-1.5">
@@ -104,9 +104,9 @@ export default function Limits() {
                     max={maxVal}
                     value={currentLimit}
                     onChange={(e) => handleSliderChange(deviceId, e.target.value)}
-                    className="w-16 px-1.5 py-0.5 rounded bg-slate-950 border border-white/10 text-right text-xs font-bold text-cyan-400 focus:outline-none focus:border-cyan-500"
+                    className="w-16 px-1.5 py-0.5 rounded bg-white dark:bg-slate-950 border border-slate-300 dark:border-white/10 text-right text-xs font-bold text-cyan-600 dark:text-cyan-400 focus:outline-none focus:border-cyan-500"
                   />
-                  <span className="text-[10px] text-slate-500 font-semibold">W</span>
+                  <span className="text-[10px] text-slate-400 dark:text-slate-500 font-semibold">W</span>
                 </div>
               </div>
 
@@ -119,7 +119,7 @@ export default function Limits() {
                   step="10"
                   value={currentLimit}
                   onChange={(e) => handleSliderChange(deviceId, e.target.value)}
-                  className="flex-1 h-1.5 bg-slate-800 rounded-lg appearance-none cursor-pointer accent-cyan-500"
+                  className="flex-1 h-1.5 bg-slate-350 dark:bg-slate-800 rounded-lg appearance-none cursor-pointer accent-cyan-500"
                 />
                 
                 {/* Save Button */}
@@ -128,7 +128,7 @@ export default function Limits() {
                   disabled={state === 'saving'}
                   className={`px-3 py-1.5 rounded-lg text-xs font-bold transition flex items-center space-x-1 cursor-pointer shrink-0 ${
                     state === 'saved' 
-                      ? 'bg-emerald-500 text-[#070b13]' 
+                      ? 'bg-emerald-500 text-white dark:text-[#070b13]' 
                       : 'bg-cyan-500 hover:bg-cyan-600 active:bg-cyan-700 text-[#070b13]'
                   }`}
                 >

@@ -83,45 +83,45 @@ Thank you for using WattEveR Smart Grid!
       <div className="space-y-6 py-4">
         
         {/* Success Card */}
-        <div className="p-6 rounded-2xl bg-emerald-950/20 border border-emerald-500/25 flex flex-col items-center text-center space-y-4">
-          <div className="w-14 h-14 rounded-full bg-emerald-500/10 border border-emerald-500/30 flex items-center justify-center text-emerald-400">
+        <div className="p-6 rounded-2xl bg-emerald-50 dark:bg-emerald-950/20 border border-emerald-200 dark:border-emerald-500/25 flex flex-col items-center text-center space-y-4">
+          <div className="w-14 h-14 rounded-full bg-emerald-100 dark:bg-emerald-500/10 border border-emerald-200 dark:border-emerald-500/30 flex items-center justify-center text-emerald-600 dark:text-emerald-400">
             <CheckCircle className="w-8 h-8 animate-bounce" />
           </div>
           <div>
-            <h3 className="text-lg font-bold text-slate-100">Payment Successful</h3>
-            <p className="text-xs text-slate-400 mt-1">Transaction recorded and billing cycle reset</p>
+            <h3 className="text-lg font-bold text-slate-800 dark:text-slate-100">Payment Successful</h3>
+            <p className="text-xs text-slate-500 dark:text-slate-400 mt-1">Transaction recorded and billing cycle reset</p>
           </div>
 
-          <div className="w-full bg-slate-900/50 p-4 rounded-xl border border-white/5 space-y-2.5 text-xs text-left">
+          <div className="w-full bg-slate-100 dark:bg-slate-900/50 p-4 rounded-xl border border-slate-200 dark:border-white/5 space-y-2.5 text-xs text-left">
             <div className="flex justify-between">
-              <span className="text-slate-400">Amount Paid:</span>
-              <span className="font-bold text-slate-200">₹{paymentSuccess.amount}</span>
+              <span className="text-slate-500 dark:text-slate-400">Amount Paid:</span>
+              <span className="font-bold text-slate-800 dark:text-slate-200">₹{paymentSuccess.amount}</span>
             </div>
             <div className="flex justify-between">
-              <span className="text-slate-400">Transaction ID:</span>
-              <span className="font-mono text-cyan-400">{paymentSuccess.transactionId}</span>
+              <span className="text-slate-500 dark:text-slate-400">Transaction ID:</span>
+              <span className="font-mono text-cyan-600 dark:text-cyan-400">{paymentSuccess.transactionId}</span>
             </div>
             <div className="flex justify-between">
-              <span className="text-slate-400">Date & Time:</span>
-              <span className="text-slate-300">{new Date(paymentSuccess.date).toLocaleString()}</span>
+              <span className="text-slate-500 dark:text-slate-400">Date & Time:</span>
+              <span className="text-slate-700 dark:text-slate-300">{new Date(paymentSuccess.date).toLocaleString()}</span>
             </div>
             <div className="flex justify-between">
-              <span className="text-slate-400">Method:</span>
-              <span className="text-slate-300">{paymentSuccess.method}</span>
+              <span className="text-slate-500 dark:text-slate-400">Method:</span>
+              <span className="text-slate-700 dark:text-slate-300">{paymentSuccess.method}</span>
             </div>
           </div>
 
           <div className="w-full grid grid-cols-2 gap-3">
             <button
               onClick={handleDownloadReceipt}
-              className="py-2.5 rounded-lg bg-emerald-500 hover:bg-emerald-600 text-[#070b13] font-bold text-xs flex items-center justify-center space-x-1 transition cursor-pointer"
+              className="py-2.5 rounded-lg bg-emerald-500 hover:bg-emerald-600 text-white dark:text-[#070b13] font-bold text-xs flex items-center justify-center space-x-1 transition cursor-pointer"
             >
               <FileDown className="w-4 h-4" />
               <span>Download Receipt</span>
             </button>
             <Link
               to="/payment/history"
-              className="py-2.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-200 border border-white/5 font-bold text-xs flex items-center justify-center space-x-1 transition"
+              className="py-2.5 rounded-lg bg-slate-200 dark:bg-slate-800 hover:bg-slate-300 dark:hover:bg-slate-700 text-slate-800 dark:text-slate-200 border border-slate-300 dark:border-white/5 font-bold text-xs flex items-center justify-center space-x-1 transition"
             >
               <History className="w-4 h-4" />
               <span>Payment History</span>
@@ -146,28 +146,28 @@ Thank you for using WattEveR Smart Grid!
       <div className="flex items-center space-x-2.5">
         <Link 
           to="/dashboard/usage" 
-          className="p-1.5 rounded-lg bg-white/5 border border-white/5 text-slate-400 hover:text-slate-200 transition"
+          className="p-1.5 rounded-lg bg-slate-100 dark:bg-white/5 border border-slate-200 dark:border-white/5 text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 transition"
         >
           <ArrowLeft className="w-4 h-4" />
         </Link>
         <div>
-          <h2 className="text-lg font-bold text-slate-100">Bill Payment</h2>
-          <p className="text-xs text-slate-400">Review energy breakdown & complete payment</p>
+          <h2 className="text-lg font-bold text-slate-900 dark:text-slate-100">Bill Payment</h2>
+          <p className="text-xs text-slate-500 dark:text-slate-400">Review energy breakdown & complete payment</p>
         </div>
       </div>
 
       {/* Bill Summary */}
-      <div className="p-5 rounded-2xl bg-gradient-to-br from-slate-900 to-slate-950 border border-white/5 space-y-4">
-        <div className="flex justify-between items-center pb-3 border-b border-white/5">
-          <span className="text-xs font-semibold text-slate-400 uppercase tracking-wider">Total Amount Due</span>
-          <span className="text-2xl font-extrabold text-cyan-400 tracking-tight">₹{amountDue}</span>
+      <div className="p-5 rounded-2xl bg-[#f3f4f6] dark:bg-gradient-to-br dark:from-slate-900 dark:to-slate-950 border border-slate-200 dark:border-white/5 space-y-4">
+        <div className="flex justify-between items-center pb-3 border-b border-slate-250 dark:border-white/5">
+          <span className="text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider">Total Amount Due</span>
+          <span className="text-2xl font-extrabold text-cyan-600 dark:text-cyan-400 tracking-tight">₹{amountDue}</span>
         </div>
 
         {/* Appliance details breakdown */}
         <div className="space-y-2 text-xs">
-          <p className="text-[10px] font-bold text-slate-500 uppercase tracking-wider">Usage Breakdown ({totalKwh.toFixed(1)} kWh)</p>
+          <p className="text-[10px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-wider">Usage Breakdown ({totalKwh.toFixed(1)} kWh)</p>
           
-          <div className="space-y-1.5 divide-y divide-white/5 max-h-44 overflow-y-auto pr-1 dark-scrollbar">
+          <div className="space-y-1.5 divide-y divide-slate-200 dark:divide-white/5 max-h-44 overflow-y-auto pr-1 dark-scrollbar">
             {Object.keys(deviceKwh).map((deviceId) => {
               const name = deviceId === 'ac' ? "Air Conditioner" :
                            deviceId === 'fridge' ? "Refrigerator" :
@@ -180,8 +180,8 @@ Thank you for using WattEveR Smart Grid!
 
               return (
                 <div key={deviceId} className="flex justify-between py-1.5">
-                  <span className="text-slate-400">{name} ({kwh} kWh)</span>
-                  <span className="font-semibold text-slate-300">₹{cost}</span>
+                  <span className="text-slate-500 dark:text-slate-400">{name} ({kwh} kWh)</span>
+                  <span className="font-semibold text-slate-800 dark:text-slate-300">₹{cost}</span>
                 </div>
               );
             })}
@@ -191,70 +191,70 @@ Thank you for using WattEveR Smart Grid!
 
       {/* Payment Forms */}
       {amountDue <= 0 ? (
-        <div className="p-6 rounded-xl bg-emerald-950/10 border border-emerald-500/20 text-center space-y-2">
-          <CheckCircle className="w-8 h-8 text-emerald-400 mx-auto" />
-          <h4 className="text-xs font-bold text-emerald-400">Bill Fully Paid</h4>
-          <p className="text-[10px] text-slate-400">Current months cycle is settled. Next bill will generate as load accumulates.</p>
+        <div className="p-6 rounded-xl bg-emerald-50 dark:bg-emerald-950/10 border border-emerald-250 dark:border-emerald-500/20 text-center space-y-2">
+          <CheckCircle className="w-8 h-8 text-emerald-600 dark:text-emerald-400 mx-auto" />
+          <h4 className="text-xs font-bold text-emerald-800 dark:text-emerald-400">Bill Fully Paid</h4>
+          <p className="text-[10px] text-slate-550 dark:text-slate-400">Current month's cycle is settled. Next bill will generate as load accumulates.</p>
         </div>
       ) : (
         <div className="space-y-4">
           
           {/* Method Selector Tabs */}
-          <div className="grid grid-cols-3 gap-2 bg-slate-900 p-1.5 rounded-lg border border-white/5 text-xs text-center font-bold">
+          <div className="grid grid-cols-3 gap-2 bg-slate-100 dark:bg-slate-900 p-1.5 rounded-lg border border-slate-200 dark:border-white/5 text-xs text-center font-bold">
             <button
               onClick={() => setMethod('card')}
-              className={`py-2 rounded-md transition ${method === 'card' ? 'bg-cyan-500 text-[#070b13]' : 'text-slate-400 hover:text-slate-200'}`}
+              className={`py-2 rounded-md transition ${method === 'card' ? 'bg-cyan-500 text-[#070b13]' : 'text-slate-500 dark:text-slate-400 hover:text-slate-800 dark:hover:text-slate-200'}`}
             >
               Card
             </button>
             <button
               onClick={() => setMethod('upi')}
-              className={`py-2 rounded-md transition ${method === 'upi' ? 'bg-cyan-500 text-[#070b13]' : 'text-slate-400 hover:text-slate-200'}`}
+              className={`py-2 rounded-md transition ${method === 'upi' ? 'bg-cyan-500 text-[#070b13]' : 'text-slate-500 dark:text-slate-400 hover:text-slate-800 dark:hover:text-slate-200'}`}
             >
               UPI
             </button>
             <button
               onClick={() => setMethod('netbank')}
-              className={`py-2 rounded-md transition ${method === 'netbank' ? 'bg-cyan-500 text-[#070b13]' : 'text-slate-400 hover:text-slate-200'}`}
+              className={`py-2 rounded-md transition ${method === 'netbank' ? 'bg-cyan-500 text-[#070b13]' : 'text-slate-500 dark:text-slate-400 hover:text-slate-800 dark:hover:text-slate-200'}`}
             >
               Net
             </button>
           </div>
 
-          <form onSubmit={handlePayNow} className="bg-slate-900/40 border border-white/5 p-4 rounded-xl space-y-4">
+          <form onSubmit={handlePayNow} className="bg-[#f3f4f6] dark:bg-slate-900/40 border border-slate-200 dark:border-white/5 p-4 rounded-xl space-y-4">
             
             {/* 1. CREDIT/DEBIT CARD */}
             {method === 'card' && (
               <div className="space-y-3">
                 <div className="space-y-1">
-                  <label className="block text-[10px] uppercase font-bold text-slate-500 tracking-wider">Card Number</label>
+                  <label className="block text-[10px] uppercase font-bold text-slate-500 dark:text-slate-500 tracking-wider">Card Number</label>
                   <div className="relative">
-                    <CreditCard className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-500" />
+                    <CreditCard className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400 dark:text-slate-500" />
                     <input
                       type="text"
                       placeholder="4111 2222 3333 4444"
                       required
                       value={cardNumber}
                       onChange={(e) => setCardNumber(e.target.value)}
-                      className="w-full pl-9 pr-4 py-2 bg-slate-950 border border-white/10 rounded-lg text-xs focus:outline-none focus:border-cyan-500"
+                      className="w-full pl-9 pr-4 py-2 bg-white dark:bg-slate-950 border border-slate-300 dark:border-white/10 rounded-lg text-xs text-slate-800 dark:text-slate-200 focus:outline-none focus:border-cyan-500"
                     />
                   </div>
                 </div>
 
                 <div className="grid grid-cols-2 gap-3">
                   <div className="space-y-1">
-                    <label className="block text-[10px] uppercase font-bold text-slate-500 tracking-wider">Expiry Date</label>
+                    <label className="block text-[10px] uppercase font-bold text-slate-500 dark:text-slate-500 tracking-wider">Expiry Date</label>
                     <input
                       type="text"
                       placeholder="MM/YY"
                       required
                       value={expiry}
                       onChange={(e) => setExpiry(e.target.value)}
-                      className="w-full px-3 py-2 bg-slate-950 border border-white/10 rounded-lg text-xs focus:outline-none focus:border-cyan-500"
+                      className="w-full px-3 py-2 bg-white dark:bg-slate-950 border border-slate-300 dark:border-white/10 rounded-lg text-xs text-slate-800 dark:text-slate-200 focus:outline-none focus:border-cyan-500"
                     />
                   </div>
                   <div className="space-y-1">
-                    <label className="block text-[10px] uppercase font-bold text-slate-500 tracking-wider">CVV</label>
+                    <label className="block text-[10px] uppercase font-bold text-slate-500 dark:text-slate-500 tracking-wider">CVV</label>
                     <input
                       type="password"
                       placeholder="•••"
@@ -262,7 +262,7 @@ Thank you for using WattEveR Smart Grid!
                       maxLength="3"
                       value={cvv}
                       onChange={(e) => setCvv(e.target.value)}
-                      className="w-full px-3 py-2 bg-slate-950 border border-white/10 rounded-lg text-xs focus:outline-none focus:border-cyan-500"
+                      className="w-full px-3 py-2 bg-white dark:bg-slate-950 border border-slate-300 dark:border-white/10 rounded-lg text-xs text-slate-800 dark:text-slate-200 focus:outline-none focus:border-cyan-500"
                     />
                   </div>
                 </div>
@@ -273,16 +273,16 @@ Thank you for using WattEveR Smart Grid!
             {method === 'upi' && (
               <div className="space-y-3">
                 <div className="space-y-1">
-                  <label className="block text-[10px] uppercase font-bold text-slate-500 tracking-wider">Enter UPI ID</label>
+                  <label className="block text-[10px] uppercase font-bold text-slate-500 dark:text-slate-500 tracking-wider">Enter UPI ID</label>
                   <div className="relative">
-                    <Smartphone className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-500" />
+                    <Smartphone className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400 dark:text-slate-500" />
                     <input
                       type="text"
                       placeholder="username@upi"
                       required
                       value={upiId}
                       onChange={(e) => setUpiId(e.target.value)}
-                      className="w-full pl-9 pr-4 py-2 bg-slate-950 border border-white/10 rounded-lg text-xs focus:outline-none focus:border-cyan-500"
+                      className="w-full pl-9 pr-4 py-2 bg-white dark:bg-slate-950 border border-slate-300 dark:border-white/10 rounded-lg text-xs text-slate-800 dark:text-slate-200 focus:outline-none focus:border-cyan-500"
                     />
                   </div>
                 </div>
@@ -293,13 +293,13 @@ Thank you for using WattEveR Smart Grid!
             {method === 'netbank' && (
               <div className="space-y-3">
                 <div className="space-y-1">
-                  <label className="block text-[10px] uppercase font-bold text-slate-500 tracking-wider">Select Bank</label>
+                  <label className="block text-[10px] uppercase font-bold text-slate-500 dark:text-slate-500 tracking-wider">Select Bank</label>
                   <div className="relative">
-                    <Landmark className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-500" />
+                    <Landmark className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400 dark:text-slate-500" />
                     <select
                       value={bank}
                       onChange={(e) => setBank(e.target.value)}
-                      className="w-full pl-9 pr-4 py-2 bg-slate-950 border border-white/10 rounded-lg text-xs focus:outline-none focus:border-cyan-500 text-slate-200"
+                      className="w-full pl-9 pr-4 py-2 bg-white dark:bg-slate-950 border border-slate-300 dark:border-white/10 rounded-lg text-xs text-slate-800 dark:text-slate-200 focus:outline-none focus:border-cyan-500"
                     >
                       <option value="SBI">State Bank of India (SBI)</option>
                       <option value="HDFC">HDFC Bank</option>

@@ -14,6 +14,9 @@ export const AppContextProvider = ({ children }) => {
   const [currentUser, setCurrentUser] = useState(null);
   const [loading, setLoading] = useState(true);
   
+  // Theme state
+  const [theme, setTheme] = useState(() => localStorage.getItem('theme') || 'dark');
+  
   // Homeowner specific state
   const [homeownerData, setHomeownerData] = useState(null);
   const [liveData, setLiveData] = useState({ ac: 0, fridge: 0, tv: 0, washingMachine: 0, fan: 0, totalWatts: 0, monthlyKwh: 0 });
@@ -22,6 +25,21 @@ export const AppContextProvider = ({ children }) => {
   
   // Utility worker specific state
   const [allHouseholds, setAllHouseholds] = useState([]);
+
+  // Theme change sync
+  useEffect(() => {
+    if (theme === 'dark') {
+      document.documentElement.classList.add('dark');
+    } else {
+      document.documentElement.classList.remove('dark');
+    }
+    localStorage.setItem('theme', theme);
+  }, [theme]);
+
+  const toggleTheme = () => {
+    setTheme(prev => prev === 'dark' ? 'light' : 'dark');
+  };
+
 
   // 1. Auth Change Listener
   useEffect(() => {
@@ -182,6 +200,8 @@ export const AppContextProvider = ({ children }) => {
       allHouseholds,
       loading,
       isMockMode: isMock,
+      theme,
+      toggleTheme,
       loginUser,
       logoutUser,
       registerUser,
