@@ -18,9 +18,7 @@ export default function WorkerLayout() {
       {/* Top Header Bar */}
       <header className="bg-white dark:bg-[#0b0f19] border-b border-slate-200 dark:border-white/5 px-6 py-4 flex items-center justify-between shadow-xs sticky top-0 z-30">
         <div className="flex items-center space-x-3">
-          <div className="w-10 h-10 rounded-lg bg-blue-600 flex items-center justify-center text-white shadow-sm shadow-blue-500/10">
-            <Shield className="w-5.5 h-5.5" />
-          </div>
+          <img src="/logo.png" alt="WattEveR Logo" className="w-10 h-10 object-contain rounded-lg shadow-sm border border-slate-200 dark:border-white/10" />
           <div>
             <h1 className="text-base font-extrabold tracking-tight text-slate-900 dark:text-slate-100 leading-none">WattEveR Grid Portal</h1>
             <p className="text-xs text-slate-500 dark:text-slate-400 mt-1 font-medium flex items-center gap-1">
