@@ -67,7 +67,7 @@ export default function Login() {
         
         {/* Header */}
         <div className="flex flex-col items-center text-center mt-2 mb-6">
-          <img src="/logo-text.png" alt="WattEveR" className="h-16 w-auto object-contain max-w-[80%]" />
+          <img src="/logo-text.png" alt="WattEveR" className="h-20 w-auto object-contain max-w-[85%] select-none pointer-events-none" />
         </div>
 
         {/* Error Alert */}
