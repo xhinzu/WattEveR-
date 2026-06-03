@@ -21,6 +21,37 @@ const DEVICE_NAMES = {
 
 export default function Dashboard() {
   const { homeownerData, liveData, toggleDevice } = useApp();
+  const [isPowerSaverActive, setIsPowerSaverActive] = React.useState(false);
+
+  React.useEffect(() => {
+    const checkStatus = () => {
+      setIsPowerSaverActive(!!localStorage.getItem('power_saver_active_mode'));
+    };
+    checkStatus();
+    const interval = setInterval(checkStatus, 500);
+    return () => clearInterval(interval);
+  }, []);
+
+  const handleDeactivatePowerSaver = async () => {
+    playToggleOff();
+    const prevStatesStr = localStorage.getItem('power_saver_prev_states');
+    if (prevStatesStr) {
+      try {
+        const prevStates = JSON.parse(prevStatesStr);
+        const devices = ['ac', 'fridge', 'tv', 'washingMachine', 'fan'];
+        for (const d of devices) {
+          if (prevStates[d] !== undefined) {
+            await toggleDevice(d, prevStates[d]);
+          }
+        }
+      } catch (err) {
+        console.error('Failed to restore device states:', err);
+      }
+    }
+    localStorage.removeItem('power_saver_prev_states');
+    localStorage.removeItem('power_saver_active_mode');
+    setIsPowerSaverActive(false);
+  };
 
   if (!homeownerData) {
     return (
@@ -47,6 +78,21 @@ export default function Dashboard() {
   return (
     <div className="space-y-5 pb-6">
       
+      {/* Power Saver Active Banner */}
+      {isPowerSaverActive && (
+        <button
+          type="button"
+          onClick={handleDeactivatePowerSaver}
+          className="w-full p-3 py-2.5 rounded-xl bg-emerald-500/10 hover:bg-emerald-500/20 border border-emerald-500/30 flex items-center justify-between text-emerald-600 dark:text-emerald-400 text-xs font-bold transition duration-200 cursor-pointer pointer-events-auto shadow-sm"
+        >
+          <div className="flex items-center space-x-2">
+            <span className="text-sm">⚡</span>
+            <span>Power Saver Mode Active</span>
+          </div>
+          <span className="text-[10px] font-semibold underline">Tap to deactivate</span>
+        </button>
+      )}
+
       {/* Overview Card */}
       <div className="p-5 rounded-2xl bg-[#f3f4f6] dark:bg-gradient-to-br dark:from-slate-900 dark:to-slate-950 border border-slate-200 dark:border-white/5 shadow-lg relative overflow-hidden">
         {/* Glow */}

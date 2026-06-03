@@ -1,11 +1,12 @@
 /* eslint-disable react/prop-types */
 import { useState, useEffect, useRef } from 'react';
-import { MessageSquare, Zap } from 'lucide-react';
+import { MessageSquare, Zap, Leaf } from 'lucide-react';
 import { playButtonClick } from '../utils/sounds';
 
 export default function ExpandableFAB({ onSelect }) {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isReportActive, setIsReportActive] = useState(false);
+  const [isPowerSaverActive, setIsPowerSaverActive] = useState(false);
   const menuRef = useRef(null);
 
   // Sync and verify active outage status on mount & interval
@@ -27,6 +28,16 @@ export default function ExpandableFAB({ onSelect }) {
     };
     checkReportStatus();
     const interval = setInterval(checkReportStatus, 5000);
+    return () => clearInterval(interval);
+  }, []);
+
+  // Sync and verify Power Saver active state
+  useEffect(() => {
+    const checkPowerSaver = () => {
+      setIsPowerSaverActive(!!localStorage.getItem('power_saver_active_mode'));
+    };
+    checkPowerSaver();
+    const interval = setInterval(checkPowerSaver, 1000);
     return () => clearInterval(interval);
   }, []);
 
@@ -56,6 +67,14 @@ export default function ExpandableFAB({ onSelect }) {
       icon: MessageSquare,
       colorClass: 'bg-cyan-500 hover:bg-cyan-600 shadow-cyan-500/20 text-white',
       target: 'chatbot'
+    },
+    {
+      id: 'powersaver',
+      label: 'Power Saver',
+      icon: Leaf,
+      colorClass: 'bg-[#00b894] hover:bg-[#00a382] shadow-[#00b894]/20 text-white',
+      target: 'powersaver',
+      badge: isPowerSaverActive ? 'Active' : null
     },
     {
       id: 'emergency',
@@ -97,7 +116,9 @@ export default function ExpandableFAB({ onSelect }) {
                   style={{
                     transitionDelay: isMenuOpen ? `${index * 75 + 150}ms` : '0ms',
                   }}
-                  className="bg-red-600 text-white text-[9px] font-bold px-2 py-0.5 rounded-full shadow-md animate-pulse pointer-events-auto"
+                  className={`text-white text-[9px] font-bold px-2 py-0.5 rounded-full shadow-md animate-pulse pointer-events-auto ${
+                    item.id === 'powersaver' ? 'bg-[#00b894]' : 'bg-red-600'
+                  }`}
                 >
                   {item.badge}
                 </span>
@@ -137,7 +158,11 @@ export default function ExpandableFAB({ onSelect }) {
       <button
         type="button"
         onClick={handleMainClick}
-        className="w-12 h-12 rounded-full bg-transparent border border-cyan-500/40 dark:border-cyan-400/30 text-cyan-600 dark:text-cyan-400 hover:bg-cyan-500/10 dark:hover:bg-cyan-400/10 shadow-md flex items-center justify-center transition-all duration-300 transform hover:scale-105 active:scale-95 cursor-pointer z-40 relative pointer-events-auto animate-chatbot-pulse"
+        className={`w-12 h-12 rounded-full bg-transparent border flex items-center justify-center transition-all duration-300 transform hover:scale-105 active:scale-95 cursor-pointer z-40 relative pointer-events-auto animate-chatbot-pulse ${
+          isPowerSaverActive
+            ? 'border-[#00b894] text-[#00b894] hover:bg-[#00b894]/10 shadow-[#00b894]/5'
+            : 'border-cyan-500/40 dark:border-cyan-400/30 text-cyan-600 dark:text-cyan-400 hover:bg-cyan-500/10 dark:hover:bg-cyan-400/10 shadow-md shadow-cyan-500/5'
+        }`}
         title="Support & Services"
       >
         <svg 

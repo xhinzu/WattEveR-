@@ -6,6 +6,7 @@ import { playButtonClick, playAlert } from '../utils/sounds';
 import Chatbot from './Chatbot';
 import EmergencyButton from './EmergencyButton';
 import ExpandableFAB from './ExpandableFAB';
+import PowerSaverPopup from './PowerSaverPopup';
 
 export default function HomeownerLayout() {
   const { currentUser, homeownerData, liveData, alerts, logoutUser } = useApp();
@@ -183,6 +184,7 @@ export default function HomeownerLayout() {
           </div>
           <div className="pointer-events-auto float-right flex flex-col items-end">
             <EmergencyButton isOpen={activePopup === 'emergency'} onClose={() => setActivePopup(null)} />
+            <PowerSaverPopup isOpen={activePopup === 'powersaver'} onClose={() => setActivePopup(null)} />
             <ExpandableFAB onSelect={(target) => setActivePopup(target)} />
           </div>
         </div>
