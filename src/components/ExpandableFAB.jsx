@@ -1,6 +1,6 @@
 /* eslint-disable react/prop-types */
 import { useState, useEffect, useRef } from 'react';
-import { MessageSquare, Zap, Plus } from 'lucide-react';
+import { MessageSquare, Zap } from 'lucide-react';
 import { playButtonClick } from '../utils/sounds';
 
 export default function ExpandableFAB({ onSelect }) {
@@ -137,14 +137,22 @@ export default function ExpandableFAB({ onSelect }) {
       <button
         type="button"
         onClick={handleMainClick}
-        className="w-12 h-12 rounded-full bg-gradient-to-r from-cyan-500 to-teal-500 hover:from-cyan-600 hover:to-teal-600 text-white shadow-lg flex items-center justify-center transition-all duration-300 transform hover:scale-105 active:scale-95 cursor-pointer z-40 relative pointer-events-auto animate-chatbot-pulse"
+        className="w-12 h-12 rounded-full bg-transparent border border-cyan-500/40 dark:border-cyan-400/30 text-cyan-600 dark:text-cyan-400 hover:bg-cyan-500/10 dark:hover:bg-cyan-400/10 shadow-md flex items-center justify-center transition-all duration-300 transform hover:scale-105 active:scale-95 cursor-pointer z-40 relative pointer-events-auto animate-chatbot-pulse"
         title="Support & Services"
       >
-        <Plus 
-          className={`w-5 h-5 transition-transform duration-300 ${
+        <svg 
+          viewBox="0 0 24 24" 
+          className={`w-5 h-5 fill-current transition-transform duration-300 ${
             isMenuOpen ? 'rotate-45' : ''
-          }`} 
-        />
+          }`}
+        >
+          <circle cx="6" cy="5" r="2" />
+          <circle cx="18" cy="5" r="2" />
+          <circle cx="6" cy="12" r="2" />
+          <circle cx="18" cy="12" r="2" />
+          <circle cx="6" cy="19" r="2" />
+          <circle cx="18" cy="19" r="2" />
+        </svg>
 
         {/* Warning notification dot */}
         {isReportActive && !isMenuOpen && (
