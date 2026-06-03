@@ -146,12 +146,15 @@ export default function ExpandableFAB({ onSelect }) {
             isMenuOpen ? 'rotate-45' : ''
           }`}
         >
-          <circle cx="6" cy="5" r="2" />
-          <circle cx="18" cy="5" r="2" />
-          <circle cx="6" cy="12" r="2" />
-          <circle cx="18" cy="12" r="2" />
-          <circle cx="6" cy="19" r="2" />
-          <circle cx="18" cy="19" r="2" />
+          <circle cx="5" cy="5" r="2" />
+          <circle cx="12" cy="5" r="2" />
+          <circle cx="19" cy="5" r="2" />
+          <circle cx="5" cy="12" r="2" />
+          <circle cx="12" cy="12" r="2" />
+          <circle cx="19" cy="12" r="2" />
+          <circle cx="5" cy="19" r="2" />
+          <circle cx="12" cy="19" r="2" />
+          <circle cx="19" cy="19" r="2" />
         </svg>
 
         {/* Warning notification dot */}
