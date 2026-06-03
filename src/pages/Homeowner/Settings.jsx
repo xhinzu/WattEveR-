@@ -212,7 +212,7 @@ export default function Settings() {
 
         <div className="pt-3 text-center border-t border-slate-200 dark:border-white/5">
           <p className="text-[9px] text-slate-400 dark:text-slate-500 tracking-wide font-semibold">
-            Develovped By Hari,Sreedev,Navaneeth,Ben
+            Develovped By Hari,Sreedev,Navaneeth,Ben,Devan
           </p>
         </div>
       </div>
