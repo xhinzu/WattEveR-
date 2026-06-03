@@ -90,6 +90,9 @@ export const startSimulation = (activeUser, allHouseholdsList = []) => {
       const simulatedWatts = {};
       let totalWatts = 0;
 
+      // Check if alerts are muted for this user
+      const isMuted = localStorage.getItem(`alerts_muted_${uid}`) === 'true';
+
       const devices = ["ac", "fridge", "tv", "washingMachine", "fan"];
       devices.forEach(device => {
         const isOn = deviceStatuses[device];
@@ -101,7 +104,7 @@ export const startSimulation = (activeUser, allHouseholdsList = []) => {
 
           // Check if limit exceeded
           const limit = deviceLimits[device];
-          if (watts > limit) {
+          if (watts > limit && !isMuted) {
             const exceededAmount = watts - limit;
             const alertData = {
               deviceId: device,
@@ -122,7 +125,6 @@ export const startSimulation = (activeUser, allHouseholdsList = []) => {
       // Update Monthly kWh
       const kwhIncrement = totalWatts / KWH_SCALE;
       const newMonthlyKwh = Number((Number(currentLive.monthlyKwh || 0) + kwhIncrement).toFixed(2));
-      const estimatedBill = Number((newMonthlyKwh * 6).toFixed(2));
 
       // Check budget projection alert
       // Assume 100 hours of current load is the projected consumption addition
@@ -130,7 +132,7 @@ export const startSimulation = (activeUser, allHouseholdsList = []) => {
       const projectedBill = Math.round(projectedKwh * 6);
       const monthlyBudget = user.monthlyBudget || 2000;
 
-      if (projectedBill > monthlyBudget) {
+      if (projectedBill > monthlyBudget && !isMuted) {
         const exceededAmount = projectedBill - monthlyBudget;
         const alertData = {
           deviceId: "budget",

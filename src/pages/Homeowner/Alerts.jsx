@@ -1,9 +1,15 @@
-import React from 'react';
 import { useApp } from '../../context/AppContext';
 import { Bell, AlertTriangle, IndianRupee, ShieldCheck, Clock } from 'lucide-react';
+import { playButtonClick } from '../../utils/sounds';
 
 export default function Alerts() {
-  const { alerts } = useApp();
+  const { alerts, homeownerData, toggleAlertsMuted } = useApp();
+  const isMuted = homeownerData?.alertsMuted || false;
+
+  const handleToggleMute = async () => {
+    playButtonClick();
+    await toggleAlertsMuted(!isMuted);
+  };
 
   // Format date nicely
   const formatTime = (isoString) => {
@@ -11,7 +17,7 @@ export default function Alerts() {
       const date = new Date(isoString);
       return date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' }) + 
              ' ' + date.toLocaleDateString([], { month: 'short', day: 'numeric' });
-    } catch (e) {
+    } catch {
       return isoString;
     }
   };
@@ -33,6 +39,37 @@ export default function Alerts() {
           <span className="text-[10px] bg-rose-50 dark:bg-rose-500/10 border border-rose-200 dark:border-rose-500/35 text-rose-600 dark:text-rose-400 px-2.5 py-0.5 rounded-full font-bold animate-pulse">
             {alerts.length} Active
           </span>
+        )}
+      </div>
+
+      {/* Mute Control Row */}
+      <div className="p-4 rounded-xl bg-[#f3f4f6] dark:bg-slate-900/40 border border-slate-200 dark:border-white/5 space-y-3">
+        <div className="flex justify-between items-center">
+          <div className="space-y-0.5">
+            <h3 className="text-xs font-bold text-slate-550 dark:text-slate-400 uppercase tracking-wider">Live Alerts</h3>
+            <p className="text-[10px] text-slate-400 dark:text-slate-500">
+              Status: <span className={`font-semibold capitalize ${!isMuted ? 'text-cyan-600 dark:text-cyan-400' : 'text-slate-400 dark:text-slate-555'}`}>{!isMuted ? 'Active' : 'Muted'}</span>
+            </p>
+          </div>
+
+          <button 
+            type="button"
+            onClick={handleToggleMute}
+            className="focus:outline-none cursor-pointer p-1 relative flex items-center"
+            aria-label="Toggle Live Alerts"
+          >
+            <div className={`w-12 h-6 rounded-full transition-colors relative ${!isMuted ? 'bg-cyan-500 dark:bg-cyan-600' : 'bg-slate-300 dark:bg-slate-800'}`}>
+              <div className={`absolute top-0.5 left-0.5 w-5 h-5 rounded-full bg-white shadow-md transition-all transform duration-300 ${!isMuted ? 'translate-x-6' : ''}`} />
+            </div>
+          </button>
+        </div>
+
+        {/* Muted Warning Banner */}
+        {isMuted && (
+          <div className="p-3 rounded-lg bg-amber-500/10 dark:bg-amber-500/5 border border-amber-500/25 dark:border-amber-550/20 text-amber-800 dark:text-amber-400 text-xs font-medium flex items-start space-x-2 animate-pulse">
+            <span className="shrink-0 text-sm">🔕</span>
+            <span>Alerts are muted. New limit breaches will not be recorded.</span>
+          </div>
         )}
       </div>
 

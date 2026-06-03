@@ -1,6 +1,6 @@
 import { initializeApp, getApps } from 'firebase/app';
 import { getAuth, signInWithEmailAndPassword, signOut, onAuthStateChanged, createUserWithEmailAndPassword } from 'firebase/auth';
-import { getFirestore, doc, setDoc, getDoc, updateDoc, collection, addDoc, onSnapshot, query, where, getDocs } from 'firebase/firestore';
+import { getFirestore, doc, setDoc, getDoc, updateDoc, collection, addDoc, onSnapshot, query, where } from 'firebase/firestore';
 import { getDatabase, ref, onValue, set, update } from 'firebase/database';
 
 // Firebase environment configuration check
@@ -437,6 +437,20 @@ export const flagHouseholdAnomaly = async (uid, isFlagged) => {
   }
 };
 
+export const updateAlertsMuted = async (uid, isMuted) => {
+  if (isMock) {
+    if (mockUsers[uid]) {
+      mockUsers[uid].alertsMuted = isMuted;
+      setStorageItem("mock_users", mockUsers);
+      triggerListeners("users", uid);
+    }
+  } else {
+    await updateDoc(doc(db, "users", uid), {
+      alertsMuted: isMuted
+    });
+  }
+};
+
 export const getAlerts = (uid, callback) => {
   if (isMock) {
     const listenerObj = { uid, callback };
@@ -458,6 +472,9 @@ export const getAlerts = (uid, callback) => {
 };
 
 export const addAlert = async (uid, alertData) => {
+  const isMuted = localStorage.getItem(`alerts_muted_${uid}`) === 'true';
+  if (isMuted) return;
+
   if (isMock) {
     const newAlert = {
       id: "alert-" + Math.random().toString(36).substr(2, 9),

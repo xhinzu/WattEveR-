@@ -1,10 +1,11 @@
-import React, { createContext, useContext, useState, useEffect } from 'react';
+/* eslint-disable react/prop-types */
+import { createContext, useContext, useState, useEffect } from 'react';
 import { 
   login, logout, register, onAuthChanged, 
   getUserData, updateDeviceLimit, updateDeviceStatus, 
   updateUserBudget, flagHouseholdAnomaly, getAlerts, 
   getAllHouseholds, subscribeToLiveData, isMock,
-  getPaymentHistory, recordPayment
+  getPaymentHistory, recordPayment, updateAlertsMuted
 } from '../firebase';
 import { startSimulation } from '../simulator';
 
@@ -35,6 +36,13 @@ export const AppContextProvider = ({ children }) => {
     }
     localStorage.setItem('theme', theme);
   }, [theme]);
+
+  // Sync alerts muted preference to localStorage for instant lookup
+  useEffect(() => {
+    if (currentUser && homeownerData) {
+      localStorage.setItem(`alerts_muted_${currentUser.uid}`, homeownerData.alertsMuted ? 'true' : 'false');
+    }
+  }, [homeownerData, currentUser]);
 
   const toggleTheme = () => {
     setTheme(prev => prev === 'dark' ? 'light' : 'dark');
@@ -190,6 +198,12 @@ export const AppContextProvider = ({ children }) => {
     return await recordPayment(currentUser.uid, amount, paymentMethod);
   };
 
+  const toggleAlertsMuted = async (isMuted) => {
+    if (!currentUser) return;
+    localStorage.setItem(`alerts_muted_${currentUser.uid}`, isMuted ? 'true' : 'false');
+    await updateAlertsMuted(currentUser.uid, isMuted);
+  };
+
   return (
     <AppContext.Provider value={{
       currentUser,
@@ -209,7 +223,8 @@ export const AppContextProvider = ({ children }) => {
       setDeviceLimit,
       setBudget,
       toggleAnomaly,
-      payBill
+      payBill,
+      toggleAlertsMuted
     }}>
       {children}
     </AppContext.Provider>

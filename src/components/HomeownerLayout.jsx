@@ -19,7 +19,15 @@ export default function HomeownerLayout() {
     navigate('/login');
   };
 
-  const activeAlertsCount = alerts.length;
+  const [frozenAlertsCount, setFrozenAlertsCount] = useState(0);
+
+  useEffect(() => {
+    if (!homeownerData?.alertsMuted) {
+      setFrozenAlertsCount(alerts.length);
+    }
+  }, [alerts.length, homeownerData?.alertsMuted]);
+
+  const activeAlertsCount = homeownerData?.alertsMuted ? frozenAlertsCount : alerts.length;
   const isAnomaly = homeownerData?.anomalyFlagged;
 
   // Sound trigger for new limit exceeded alerts
@@ -34,12 +42,14 @@ export default function HomeownerLayout() {
     if (prevLimitExceededCountRef.current === -1) {
       prevLimitExceededCountRef.current = currentCount;
     } else if (currentCount > prevLimitExceededCountRef.current) {
-      playAlert();
+      if (!homeownerData?.alertsMuted) {
+        playAlert();
+      }
       prevLimitExceededCountRef.current = currentCount;
     } else {
       prevLimitExceededCountRef.current = currentCount;
     }
-  }, [alerts, currentUser]);
+  }, [alerts, currentUser, homeownerData?.alertsMuted]);
 
   return (
     <div className="min-h-screen bg-slate-100 dark:bg-[#070b13] text-[#111827] dark:text-slate-100 flex justify-center selection:bg-cyan-500/30">
