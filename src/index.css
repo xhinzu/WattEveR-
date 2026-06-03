@@ -118,4 +118,21 @@ html, body, #root {
   animation-delay: 0.4s;
 }
 
+@keyframes emergency-pulse {
+  0% {
+    box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.6);
+  }
+  70% {
+    box-shadow: 0 0 0 10px rgba(239, 68, 68, 0);
+  }
+  100% {
+    box-shadow: 0 0 0 0 rgba(239, 68, 68, 0);
+  }
+}
+
+.animate-emergency-pulse {
+  animation: emergency-pulse 1.8s infinite;
+}
+
+
 

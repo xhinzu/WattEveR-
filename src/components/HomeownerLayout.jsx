@@ -4,6 +4,7 @@ import { useApp } from '../context/AppContext';
 import { Zap, BarChart2, Sliders, Bell, Settings, LogOut, AlertTriangle } from 'lucide-react';
 import { playButtonClick, playAlert } from '../utils/sounds';
 import Chatbot from './Chatbot';
+import EmergencyButton from './EmergencyButton';
 
 export default function HomeownerLayout() {
   const { currentUser, homeownerData, liveData, alerts, logoutUser } = useApp();
@@ -173,10 +174,13 @@ export default function HomeownerLayout() {
           
         </nav>
 
-        {/* Floating Chatbot Overlay */}
+        {/* Floating Chatbot & Emergency Button Overlay */}
         <div className="fixed bottom-20 left-1/2 -translate-x-1/2 w-full max-w-md px-4 z-50 pointer-events-none">
-          <div className="pointer-events-auto float-right">
+          <div className="pointer-events-auto float-left">
             <Chatbot />
+          </div>
+          <div className="pointer-events-auto float-right">
+            <EmergencyButton />
           </div>
         </div>
 

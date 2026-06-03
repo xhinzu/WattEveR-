@@ -94,7 +94,7 @@ export default function Chatbot() {
   return (
     <div className="relative">
       <div 
-        className={`absolute bottom-16 right-0 w-[320px] h-[450px] bg-white dark:bg-[#0b0f19] border border-slate-200 dark:border-white/10 rounded-2xl shadow-2xl flex flex-col overflow-hidden transition-all duration-300 transform origin-bottom-right ${
+        className={`absolute bottom-16 left-0 w-[320px] h-[450px] bg-white dark:bg-[#0b0f19] border border-slate-200 dark:border-white/10 rounded-2xl shadow-2xl flex flex-col overflow-hidden transition-all duration-300 transform origin-bottom-left ${
           isOpen 
             ? 'opacity-100 scale-100 translate-y-0 pointer-events-auto' 
             : 'opacity-0 scale-95 translate-y-4 pointer-events-none'

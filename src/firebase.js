@@ -628,3 +628,26 @@ export const recordPayment = async (uid, amount, paymentMethod) => {
   
   return { transactionId, date: paymentDate };
 };
+
+export const submitOutageReport = async (email, issueType, description) => {
+  const timestamp = new Date().toISOString();
+  const reportId = String(Math.floor(100000 + Math.random() * 900000));
+  const reportData = {
+    reportId,
+    email,
+    issueType,
+    description,
+    timestamp
+  };
+
+  if (isMock) {
+    const mockOutages = getStorageItem("mock_outage_reports", []);
+    mockOutages.unshift(reportData);
+    setStorageItem("mock_outage_reports", mockOutages);
+  } else {
+    await addDoc(collection(db, "outage_reports"), reportData);
+  }
+
+  return reportId;
+};
+
