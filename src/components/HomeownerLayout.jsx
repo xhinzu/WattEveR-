@@ -1,14 +1,16 @@
-import { useEffect, useRef } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { NavLink, Outlet, useNavigate } from 'react-router-dom';
 import { useApp } from '../context/AppContext';
 import { Zap, BarChart2, Sliders, Bell, Settings, LogOut, AlertTriangle } from 'lucide-react';
 import { playButtonClick, playAlert } from '../utils/sounds';
 import Chatbot from './Chatbot';
 import EmergencyButton from './EmergencyButton';
+import ExpandableFAB from './ExpandableFAB';
 
 export default function HomeownerLayout() {
   const { currentUser, homeownerData, liveData, alerts, logoutUser } = useApp();
   const navigate = useNavigate();
+  const [activePopup, setActivePopup] = useState(null);
 
   const handleLogout = async () => {
     playButtonClick();
@@ -174,13 +176,14 @@ export default function HomeownerLayout() {
           
         </nav>
 
-        {/* Floating Chatbot & Emergency Button Overlay */}
+        {/* Floating Chatbot, Emergency & Expandable FAB Overlay */}
         <div className="fixed bottom-20 left-1/2 -translate-x-1/2 w-full max-w-md px-4 z-50 pointer-events-none">
           <div className="pointer-events-auto float-left">
-            <Chatbot />
+            <Chatbot isOpen={activePopup === 'chatbot'} onClose={() => setActivePopup(null)} />
           </div>
-          <div className="pointer-events-auto float-right">
-            <EmergencyButton />
+          <div className="pointer-events-auto float-right flex flex-col items-end">
+            <EmergencyButton isOpen={activePopup === 'emergency'} onClose={() => setActivePopup(null)} />
+            <ExpandableFAB onSelect={(target) => setActivePopup(target)} />
           </div>
         </div>
 

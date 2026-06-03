@@ -1,49 +1,23 @@
+/* eslint-disable react/prop-types */
 import { useState, useEffect } from 'react';
 import { Zap, Phone, AlertTriangle, X } from 'lucide-react';
 import { useApp } from '../context/AppContext';
 import { playAlert } from '../utils/sounds';
 import { submitOutageReport } from '../firebase';
 
-export default function EmergencyButton() {
+export default function EmergencyButton({ isOpen, onClose }) {
   const { currentUser } = useApp();
-  const [isOpen, setIsOpen] = useState(false);
   const [formStep, setFormStep] = useState('options'); // 'options' | 'form' | 'success'
   const [issueType, setIssueType] = useState('Power Outage');
   const [description, setDescription] = useState('');
   const [reportId, setReportId] = useState('');
-  const [isReportActive, setIsReportActive] = useState(false);
 
-  // Sync and verify active outage status on mount & interval
+  // Reset form step to options when opened
   useEffect(() => {
-    const checkReportStatus = () => {
-      const timeStr = localStorage.getItem('outage_report_time');
-      if (timeStr) {
-        const reportTime = new Date(timeStr).getTime();
-        const now = new Date().getTime();
-        const diffHours = (now - reportTime) / (1000 * 60 * 60);
-        if (diffHours < 24) {
-          setIsReportActive(true);
-        } else {
-          localStorage.removeItem('outage_report_time');
-          setIsReportActive(false);
-        }
-      }
-    };
-    checkReportStatus();
-    const interval = setInterval(checkReportStatus, 60000);
-    return () => clearInterval(interval);
-  }, []);
-
-  const handleButtonClick = () => {
-    playAlert();
-    setIsOpen(!isOpen);
-    setFormStep('options');
-  };
-
-  const handleDismissReport = () => {
-    localStorage.removeItem('outage_report_time');
-    setIsReportActive(false);
-  };
+    if (isOpen) {
+      setFormStep('options');
+    }
+  }, [isOpen]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -52,7 +26,6 @@ export default function EmergencyButton() {
       const id = await submitOutageReport(userEmail, issueType, description);
       setReportId(id);
       localStorage.setItem('outage_report_time', new Date().toISOString());
-      setIsReportActive(true);
       setFormStep('success');
       setDescription('');
     } catch (err) {
@@ -66,21 +39,6 @@ export default function EmergencyButton() {
 
   return (
     <div className="relative">
-      {/* Active Outage Status Badge */}
-      {isReportActive && (
-        <div className="absolute bottom-14 right-0 flex items-center space-x-1.5 bg-red-600 text-white text-[10px] font-bold px-2.5 py-1 rounded-full shadow-lg border border-red-500 z-40 animate-pulse pointer-events-auto whitespace-nowrap">
-          <span>Report Active</span>
-          <button 
-            type="button"
-            onClick={handleDismissReport}
-            className="hover:text-red-200 transition cursor-pointer p-0.5 flex items-center justify-center"
-            title="Dismiss status"
-          >
-            <X className="w-3 h-3" />
-          </button>
-        </div>
-      )}
-
       {/* Outage Popup */}
       <div 
         className={`absolute bottom-16 right-0 w-[320px] h-[450px] bg-[#0f0b0b] border border-red-500/30 rounded-2xl shadow-2xl shadow-red-950/20 flex flex-col overflow-hidden transition-all duration-300 transform origin-bottom-right text-slate-100 z-50 ${
@@ -102,7 +60,7 @@ export default function EmergencyButton() {
           </div>
           <button 
             type="button"
-            onClick={() => { playAlert(); setIsOpen(false); }}
+            onClick={() => { playAlert(); onClose(); }}
             className="p-1 rounded-full text-slate-400 hover:text-slate-200 hover:bg-white/5 transition cursor-pointer"
           >
             <X className="w-4 h-4" />
@@ -253,7 +211,7 @@ export default function EmergencyButton() {
               </div>
               <button
                 type="button"
-                onClick={() => { playAlert(); setIsOpen(false); }}
+                onClick={() => { playAlert(); onClose(); }}
                 className="w-full py-2.5 rounded-xl bg-slate-900 hover:bg-slate-800 border border-slate-800 text-slate-200 transition cursor-pointer text-xs font-bold mt-2"
               >
                 Back to Dashboard
@@ -263,20 +221,6 @@ export default function EmergencyButton() {
         </div>
       </div>
 
-      {/* Floating Button */}
-      <button
-        type="button"
-        onClick={handleButtonClick}
-        className={`w-12 h-12 rounded-full bg-gradient-to-r from-red-600 to-orange-600 hover:from-red-700 hover:to-orange-700 text-white shadow-lg shadow-red-600/20 flex items-center justify-center transition-all duration-300 animate-emergency-pulse transform hover:scale-105 active:scale-95 cursor-pointer z-50`}
-        title="Power Outage Support"
-      >
-        <div className="relative">
-          <Zap className="w-5 h-5 fill-white/10" />
-          <span className="absolute -top-1.5 -right-1.5 bg-red-600 border border-white dark:border-slate-900 rounded-full w-4.5 h-4.5 flex items-center justify-center text-[10px] font-extrabold text-white">
-            !
-          </span>
-        </div>
-      </button>
     </div>
   );
 }

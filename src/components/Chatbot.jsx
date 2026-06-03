@@ -1,9 +1,9 @@
+/* eslint-disable react/prop-types */
 import { useState, useEffect, useRef } from 'react';
-import { MessageSquare, Bot, X, Send } from 'lucide-react';
+import { Bot, X, Send } from 'lucide-react';
 import { playButtonClick } from '../utils/sounds';
 
-export default function Chatbot() {
-  const [isOpen, setIsOpen] = useState(false);
+export default function Chatbot({ isOpen, onClose }) {
   const [inputText, setInputText] = useState('');
   const [messages, setMessages] = useState([
     {
@@ -116,7 +116,7 @@ export default function Chatbot() {
           </div>
           <button 
             type="button"
-            onClick={() => { playButtonClick(); setIsOpen(false); }}
+            onClick={() => { playButtonClick(); onClose(); }}
             className="p-1 rounded-full text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 hover:bg-slate-100 dark:hover:bg-white/5 transition cursor-pointer"
           >
             <X className="w-4 h-4" />
@@ -196,16 +196,6 @@ export default function Chatbot() {
           </button>
         </form>
       </div>
-
-      {/* Floating Button */}
-      <button
-        type="button"
-        onClick={() => { playButtonClick(); setIsOpen(!isOpen); }}
-        className={`w-12 h-12 rounded-full bg-gradient-to-r from-cyan-500 to-teal-500 hover:from-cyan-600 hover:to-teal-600 text-white shadow-lg flex items-center justify-center transition-all duration-300 animate-chatbot-pulse transform hover:scale-105 active:scale-95 cursor-pointer z-50`}
-        title="WattEveR Assistant"
-      >
-        <MessageSquare className="w-5 h-5 fill-white/10" />
-      </button>
     </div>
   );
 }
