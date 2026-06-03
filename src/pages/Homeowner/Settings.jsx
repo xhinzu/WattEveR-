@@ -4,8 +4,17 @@ import { useApp } from '../../context/AppContext';
 import { Settings as SettingsIcon, IndianRupee, Save, Check, User, MapPin, Mail, Activity, History, Sun, Moon } from 'lucide-react';
 import { playButtonClick } from '../../utils/sounds';
 
+const themesList = [
+  { name: 'cyan', hex: '#00e5ff', label: 'Cyan' },
+  { name: 'red', hex: '#ff4757', label: 'Red' },
+  { name: 'blue', hex: '#1e90ff', label: 'Blue' },
+  { name: 'violet', hex: '#a55eea', label: 'Violet' },
+  { name: 'yellow', hex: '#ffa502', label: 'Yellow' },
+  { name: 'green', hex: '#2ed573', label: 'Green' },
+];
+
 export default function Settings() {
-  const { homeownerData, setBudget, theme, toggleTheme } = useApp();
+  const { homeownerData, setBudget, theme, toggleTheme, themeColor, setThemeColor } = useApp();
   const [budgetVal, setBudgetVal] = useState(2000);
   const [saving, setSaving] = useState(false);
   const [saved, setSaved] = useState(false);
@@ -45,27 +54,72 @@ export default function Settings() {
       </div>
 
       {/* Interface Theme Toggle Card */}
-      <div className="p-4 rounded-xl bg-[#f3f4f6] dark:bg-slate-900/40 border border-slate-200 dark:border-white/5 flex items-center justify-between">
-        <div className="space-y-0.5">
-          <h3 className="text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider">Interface Theme</h3>
-          <p className="text-[10px] text-slate-500 dark:text-slate-500">Active mode: <span className="font-semibold capitalize text-cyan-600 dark:text-cyan-400">{theme} Mode</span></p>
+      <div className="p-4 rounded-xl bg-[#f3f4f6] dark:bg-slate-900/40 border border-slate-200 dark:border-white/5 space-y-4">
+        {/* Toggle Mode Row */}
+        <div className="flex items-center justify-between">
+          <div className="space-y-0.5">
+            <h3 className="text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider">Interface Theme</h3>
+            <p className="text-[10px] text-slate-500 dark:text-slate-500">Active mode: <span className="font-semibold capitalize text-cyan-600 dark:text-cyan-400">{theme} Mode</span></p>
+          </div>
+
+          <button 
+            onClick={() => { playButtonClick(); toggleTheme(); }}
+            className="focus:outline-none cursor-pointer p-1 relative flex items-center"
+            aria-label="Toggle Theme"
+          >
+            <div className="w-12 h-6 bg-slate-300 dark:bg-slate-800 rounded-full transition-colors relative">
+              <div className={`absolute top-0.5 left-0.5 w-5 h-5 rounded-full bg-white dark:bg-cyan-400 shadow-md flex items-center justify-center transition-all transform duration-300 ${theme === 'dark' ? 'translate-x-6' : ''}`}>
+                {theme === 'dark' ? (
+                  <Moon className="w-3.5 h-3.5 text-[#070b13]" />
+                ) : (
+                  <Sun className="w-3.5 h-3.5 text-amber-500" />
+                )}
+              </div>
+            </div>
+          </button>
         </div>
 
-        <button 
-          onClick={() => { playButtonClick(); toggleTheme(); }}
-          className="focus:outline-none cursor-pointer p-1 relative flex items-center"
-          aria-label="Toggle Theme"
-        >
-          <div className="w-12 h-6 bg-slate-300 dark:bg-slate-800 rounded-full transition-colors relative">
-            <div className={`absolute top-0.5 left-0.5 w-5 h-5 rounded-full bg-white dark:bg-cyan-400 shadow-md flex items-center justify-center transition-all transform duration-300 ${theme === 'dark' ? 'translate-x-6' : ''}`}>
-              {theme === 'dark' ? (
-                <Moon className="w-3.5 h-3.5 text-[#070b13]" />
-              ) : (
-                <Sun className="w-3.5 h-3.5 text-amber-500" />
-              )}
-            </div>
+        {/* Divider */}
+        <div className="h-px bg-slate-200 dark:bg-white/5" />
+
+        {/* Theme Color selector Row */}
+        <div className="space-y-3">
+          <div className="space-y-0.5">
+            <h3 className="text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider">App Theme Color</h3>
           </div>
-        </button>
+
+          {/* Color Circles Row */}
+          <div className="flex items-center space-x-3.5">
+            {themesList.map((t) => {
+              const isSelected = themeColor === t.name;
+              return (
+                <button
+                  key={t.name}
+                  type="button"
+                  onClick={() => {
+                    playButtonClick();
+                    setThemeColor(t.name);
+                  }}
+                  style={{ backgroundColor: t.hex }}
+                  className={`w-8 h-8 rounded-full cursor-pointer transition-all duration-300 relative focus:outline-none ${
+                    isSelected 
+                      ? 'border-2 border-white ring-2 ring-slate-400 dark:ring-white/20 scale-110 shadow-lg shadow-black/20' 
+                      : 'border border-black/10 dark:border-white/10 hover:scale-105 opacity-85 hover:opacity-100'
+                  }`}
+                  title={t.label}
+                  aria-label={`Select ${t.label} Theme`}
+                />
+              );
+            })}
+          </div>
+
+          {/* Active Label below */}
+          <p className="text-[10px] text-slate-550 dark:text-slate-500 font-medium">
+            Active: <span className="font-semibold" style={{ color: themesList.find(t => t.name === themeColor)?.hex || '#00e5ff' }}>
+              {themesList.find(t => t.name === themeColor)?.label || 'Cyan'}
+            </span>
+          </p>
+        </div>
       </div>
 
       {/* Profile Details Card */}

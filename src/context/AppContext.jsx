@@ -18,6 +18,9 @@ export const AppContextProvider = ({ children }) => {
   
   // Theme state
   const [theme, setTheme] = useState(() => localStorage.getItem('theme') || 'dark');
+
+  // Theme color state
+  const [themeColor, setThemeColor] = useState(() => localStorage.getItem('theme-color') || 'cyan');
   
   // Homeowner specific state
   const [homeownerData, setHomeownerData] = useState(null);
@@ -37,6 +40,12 @@ export const AppContextProvider = ({ children }) => {
     }
     localStorage.setItem('theme', theme);
   }, [theme]);
+
+  // Theme color sync
+  useEffect(() => {
+    document.documentElement.setAttribute('data-theme-color', themeColor);
+    localStorage.setItem('theme-color', themeColor);
+  }, [themeColor]);
 
   // Sync alerts muted preference to localStorage for instant lookup
   useEffect(() => {
@@ -222,6 +231,8 @@ export const AppContextProvider = ({ children }) => {
       isMockMode: isMock,
       theme,
       toggleTheme,
+      themeColor,
+      setThemeColor,
       loginUser,
       logoutUser,
       registerUser,

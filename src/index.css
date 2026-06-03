@@ -3,14 +3,65 @@
 
 @custom-variant dark (&:where(.dark, .dark *));
 
+@property --accent-color {
+  syntax: '<color>';
+  inherits: true;
+  initial-value: #00e5ff;
+}
+
 @theme {
   --color-homeowner-bg: #0b0f19;
   --color-worker-bg: #f8fafc;
+  
+  --color-cyan-50: var(--accent-50);
+  --color-cyan-100: var(--accent-100);
+  --color-cyan-200: var(--accent-200);
+  --color-cyan-300: var(--accent-300);
+  --color-cyan-400: var(--accent-400);
+  --color-cyan-500: var(--accent-500);
+  --color-cyan-600: var(--accent-600);
+  --color-cyan-700: var(--accent-700);
+  --color-cyan-800: var(--accent-800);
+  --color-cyan-900: var(--accent-900);
+  --color-cyan-950: var(--accent-950);
 }
 
 :root {
+  --accent-color: #00e5ff;
+  
+  --accent-50: color-mix(in srgb, var(--accent-color) 10%, #ffffff);
+  --accent-100: color-mix(in srgb, var(--accent-color) 20%, #ffffff);
+  --accent-200: color-mix(in srgb, var(--accent-color) 40%, #ffffff);
+  --accent-300: color-mix(in srgb, var(--accent-color) 60%, #ffffff);
+  --accent-400: color-mix(in srgb, var(--accent-color) 80%, #ffffff);
+  --accent-500: var(--accent-color);
+  --accent-600: color-mix(in srgb, var(--accent-color) 85%, #000000);
+  --accent-700: color-mix(in srgb, var(--accent-color) 70%, #000000);
+  --accent-800: color-mix(in srgb, var(--accent-color) 50%, #000000);
+  --accent-900: color-mix(in srgb, var(--accent-color) 30%, #000000);
+  --accent-950: color-mix(in srgb, var(--accent-color) 15%, #000000);
+
   font-family: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
-  transition: background-color 0.3s ease, color 0.3s ease;
+  transition: background-color 0.3s ease, color 0.3s ease, --accent-color 0.3s ease;
+}
+
+html[data-theme-color="cyan"] {
+  --accent-color: #00e5ff;
+}
+html[data-theme-color="red"] {
+  --accent-color: #ff4757;
+}
+html[data-theme-color="blue"] {
+  --accent-color: #1e90ff;
+}
+html[data-theme-color="violet"] {
+  --accent-color: #a55eea;
+}
+html[data-theme-color="yellow"] {
+  --accent-color: #ffa502;
+}
+html[data-theme-color="green"] {
+  --accent-color: #2ed573;
 }
 
 html, body, #root {
@@ -80,13 +131,13 @@ html, body, #root {
 /* Chatbot Animations */
 @keyframes chatbot-pulse {
   0% {
-    box-shadow: 0 0 0 0 rgba(6, 182, 212, 0.6);
+    box-shadow: 0 0 0 0 color-mix(in srgb, var(--accent-color) 60%, transparent);
   }
   70% {
-    box-shadow: 0 0 0 8px rgba(6, 182, 212, 0);
+    box-shadow: 0 0 0 8px color-mix(in srgb, var(--accent-color) 0%, transparent);
   }
   100% {
-    box-shadow: 0 0 0 0 rgba(6, 182, 212, 0);
+    box-shadow: 0 0 0 0 color-mix(in srgb, var(--accent-color) 0%, transparent);
   }
 }
 
