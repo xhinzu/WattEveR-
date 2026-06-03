@@ -451,6 +451,45 @@ export const updateAlertsMuted = async (uid, isMuted) => {
   }
 };
 
+export const addConnectedDevice = async (uid, deviceDetails) => {
+  if (isMock) {
+    if (mockUsers[uid]) {
+      if (!mockUsers[uid].customDevices) {
+        mockUsers[uid].customDevices = [];
+      }
+      mockUsers[uid].customDevices.push(deviceDetails);
+      mockUsers[uid].deviceLimits[deviceDetails.id] = Number(deviceDetails.limit);
+      mockUsers[uid].deviceStatuses[deviceDetails.id] = true;
+      setStorageItem("mock_users", mockUsers);
+      triggerListeners("users", uid);
+      
+      if (mockLiveData[uid]) {
+        mockLiveData[uid][deviceDetails.id] = 0;
+        if (!mockLiveData[uid].deviceKwh) {
+          mockLiveData[uid].deviceKwh = {};
+        }
+        mockLiveData[uid].deviceKwh[deviceDetails.id] = 0;
+        setStorageItem("mock_live_data", mockLiveData);
+        triggerListeners("liveData", uid);
+      }
+    }
+  } else {
+    const userRef = doc(db, "users", uid);
+    const userDoc = await getDoc(userRef);
+    if (userDoc.exists()) {
+      const userData = userDoc.data();
+      const customDevices = userData.customDevices || [];
+      customDevices.push(deviceDetails);
+      
+      await updateDoc(userRef, {
+        customDevices,
+        [`deviceLimits.${deviceDetails.id}`]: Number(deviceDetails.limit),
+        [`deviceStatuses.${deviceDetails.id}`]: true
+      });
+    }
+  }
+};
+
 export const getAlerts = (uid, callback) => {
   if (isMock) {
     const listenerObj = { uid, callback };

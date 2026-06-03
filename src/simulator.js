@@ -6,7 +6,10 @@ const DEVICE_RANGES = {
   fridge: { min: 100, max: 200 },
   tv: { min: 80, max: 150 },
   washingMachine: { min: 400, max: 600 },
-  fan: { min: 50, max: 75 }
+  fan: { min: 50, max: 75 },
+  waterHeater: { min: 1500, max: 2500 },
+  microwave: { min: 1000, max: 1400 },
+  other: { min: 300, max: 800 }
 };
 
 const DEVICE_NAMES = {
@@ -14,7 +17,10 @@ const DEVICE_NAMES = {
   fridge: "Refrigerator",
   tv: "Television",
   washingMachine: "Washing Machine",
-  fan: "Ceiling Fan"
+  fan: "Ceiling Fan",
+  waterHeater: "Water Heater",
+  microwave: "Microwave",
+  other: "Other Device"
 };
 
 // Simulation speed config:
@@ -93,27 +99,30 @@ export const startSimulation = (activeUser, allHouseholdsList = []) => {
       // Check if alerts are muted for this user
       const isMuted = localStorage.getItem(`alerts_muted_${uid}`) === 'true';
 
-      const devices = ["ac", "fridge", "tv", "washingMachine", "fan"];
+      const devices = Object.keys(deviceStatuses);
       devices.forEach(device => {
         const isOn = deviceStatuses[device];
         if (isOn) {
-          const range = DEVICE_RANGES[device];
+          const deviceType = device.split('_')[0];
+          const range = DEVICE_RANGES[deviceType] || DEVICE_RANGES.other;
           const watts = Math.floor(Math.random() * (range.max - range.min + 1)) + range.min;
           simulatedWatts[device] = watts;
           totalWatts += watts;
 
           // Check if limit exceeded
-          const limit = deviceLimits[device];
+          const limit = deviceLimits[device] || range.min;
           if (watts > limit && !isMuted) {
             const exceededAmount = watts - limit;
+            const customName = user.customDevices?.find(d => d.id === device)?.name;
+            const deviceName = customName || DEVICE_NAMES[deviceType] || device;
             const alertData = {
               deviceId: device,
-              deviceName: DEVICE_NAMES[device],
+              deviceName: deviceName,
               value: watts,
               limit: limit,
               exceededAmount: exceededAmount,
               type: "limit_exceeded",
-              message: `${DEVICE_NAMES[device]} is drawing ${watts}W, exceeding set limit of ${limit}W by ${exceededAmount}W!`
+              message: `${deviceName} is drawing ${watts}W, exceeding set limit of ${limit}W by ${exceededAmount}W!`
             };
             addAlert(uid, alertData);
           }

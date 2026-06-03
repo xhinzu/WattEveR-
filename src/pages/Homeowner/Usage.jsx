@@ -1,30 +1,35 @@
-import React from 'react';
 import { Link } from 'react-router-dom';
 import { useApp } from '../../context/AppContext';
-import { BarChart3, Wind, Snowflake, Tv, Disc, Fan, IndianRupee } from 'lucide-react';
+import { BarChart3, Wind, Snowflake, Tv, Disc, Fan, IndianRupee, Flame, Cpu, Zap } from 'lucide-react';
 
 const DEVICE_ICONS = {
   ac: Wind,
   fridge: Snowflake,
   tv: Tv,
   washingMachine: Disc,
-  fan: Fan
-};
-
-const DEVICE_NAMES = {
-  ac: "Air Conditioner",
-  fridge: "Refrigerator",
-  tv: "Smart TV",
-  washingMachine: "Washing Machine",
-  fan: "Ceiling Fan"
+  fan: Fan,
+  waterHeater: Flame,
+  microwave: Cpu,
+  other: Zap
 };
 
 export default function Usage() {
-  const { liveData } = useApp();
+  const { liveData, homeownerData } = useApp();
 
   const totalKwh = liveData?.monthlyKwh || 0;
   const estimatedBill = Math.round(totalKwh * 6);
-  const deviceKwh = liveData?.deviceKwh || { ac: 0, fridge: 0, tv: 0, washingMachine: 0, fan: 0 };
+  const deviceKwh = liveData?.deviceKwh || {};
+
+  const defaultDevices = [
+    { id: 'ac', name: 'Air Conditioner', type: 'ac' },
+    { id: 'fridge', name: 'Refrigerator', type: 'fridge' },
+    { id: 'tv', name: 'Smart TV', type: 'tv' },
+    { id: 'washingMachine', name: 'Washing Machine', type: 'washingMachine' },
+    { id: 'fan', name: 'Ceiling Fan', type: 'fan' }
+  ];
+
+  const customDevices = homeownerData?.customDevices || [];
+  const allDevices = [...defaultDevices, ...customDevices];
 
   return (
     <div className="space-y-5 pb-6">
@@ -82,9 +87,10 @@ export default function Usage() {
 
       {/* Appliance usage cards */}
       <div className="space-y-3">
-        {Object.keys(DEVICE_NAMES).map((deviceId) => {
-          const Icon = DEVICE_ICONS[deviceId] || BarChart3;
-          const name = DEVICE_NAMES[deviceId];
+        {allDevices.map((device) => {
+          const deviceId = device.id;
+          const Icon = DEVICE_ICONS[device.type] || BarChart3;
+          const name = device.name;
           const kwh = deviceKwh[deviceId] || 0;
           const cost = Math.round(kwh * 6);
           const percentOfTotal = totalKwh > 0 ? Math.min(Math.round((kwh / totalKwh) * 100), 100) : 0;

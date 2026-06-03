@@ -1,6 +1,6 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { useApp } from '../../context/AppContext';
-import { Sliders, Wind, Snowflake, Tv, Disc, Fan, Save, Check } from 'lucide-react';
+import { Sliders, Wind, Snowflake, Tv, Disc, Fan, Save, Check, Flame, Cpu, Zap } from 'lucide-react';
 import { playButtonClick } from '../../utils/sounds';
 
 const DEVICE_ICONS = {
@@ -8,15 +8,10 @@ const DEVICE_ICONS = {
   fridge: Snowflake,
   tv: Tv,
   washingMachine: Disc,
-  fan: Fan
-};
-
-const DEVICE_NAMES = {
-  ac: "Air Conditioner",
-  fridge: "Refrigerator",
-  tv: "Smart TV",
-  washingMachine: "Washing Machine",
-  fan: "Ceiling Fan"
+  fan: Fan,
+  waterHeater: Flame,
+  microwave: Cpu,
+  other: Zap
 };
 
 const DEVICE_MAX_LIMITS = {
@@ -24,12 +19,15 @@ const DEVICE_MAX_LIMITS = {
   fridge: 800,
   tv: 500,
   washingMachine: 1500,
-  fan: 200
+  fan: 200,
+  waterHeater: 4000,
+  microwave: 2500,
+  other: 3000
 };
 
 export default function Limits() {
   const { homeownerData, setDeviceLimit } = useApp();
-  const [limits, setLimits] = useState({ ac: 0, fridge: 0, tv: 0, washingMachine: 0, fan: 0 });
+  const [limits, setLimits] = useState({});
   const [savingState, setSavingState] = useState({}); // { [deviceId]: 'idle' | 'saving' | 'saved' }
 
   // Sync with Firestore data when loaded
@@ -38,6 +36,17 @@ export default function Limits() {
       setLimits(homeownerData.deviceLimits);
     }
   }, [homeownerData]);
+
+  const defaultDevices = [
+    { id: 'ac', name: 'Air Conditioner', type: 'ac' },
+    { id: 'fridge', name: 'Refrigerator', type: 'fridge' },
+    { id: 'tv', name: 'Smart TV', type: 'tv' },
+    { id: 'washingMachine', name: 'Washing Machine', type: 'washingMachine' },
+    { id: 'fan', name: 'Ceiling Fan', type: 'fan' }
+  ];
+
+  const customDevices = homeownerData?.customDevices || [];
+  const allDevices = [...defaultDevices, ...customDevices];
 
   const handleSliderChange = (deviceId, value) => {
     setLimits(prev => ({
@@ -75,16 +84,17 @@ export default function Limits() {
 
       {/* Info Warning */}
       <div className="p-3 rounded-lg bg-cyan-50 dark:bg-cyan-950/20 border border-cyan-200 dark:border-cyan-800/25 text-[11px] text-slate-700 dark:text-slate-300">
-        When an active device's live wattage draws more than its set limit, a warning alert will instantly be recorded.
+        When an active device&apos;s live wattage draws more than its set limit, a warning alert will instantly be recorded.
       </div>
 
       {/* Limits Form list */}
       <div className="space-y-4">
-        {Object.keys(DEVICE_NAMES).map((deviceId) => {
-          const Icon = DEVICE_ICONS[deviceId] || Sliders;
-          const name = DEVICE_NAMES[deviceId];
+        {allDevices.map((device) => {
+          const deviceId = device.id;
+          const Icon = DEVICE_ICONS[device.type] || Sliders;
+          const name = device.name;
           const currentLimit = limits[deviceId] || 0;
-          const maxVal = DEVICE_MAX_LIMITS[deviceId] || 2000;
+          const maxVal = DEVICE_MAX_LIMITS[device.type] || 2000;
           const state = savingState[deviceId] || 'idle';
 
           return (

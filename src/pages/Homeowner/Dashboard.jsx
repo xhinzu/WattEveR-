@@ -1,27 +1,24 @@
 import React from 'react';
 import { useApp } from '../../context/AppContext';
-import { Wind, Snowflake, Tv, Disc, Fan, AlertTriangle, ToggleLeft, ToggleRight, Zap } from 'lucide-react';
+import { Wind, Snowflake, Tv, Disc, Fan, AlertTriangle, ToggleLeft, ToggleRight, Zap, Plus, Flame, Cpu } from 'lucide-react';
 import { playToggleOn, playToggleOff } from '../../utils/sounds';
+import ConnectDeviceWizard from '../../components/ConnectDeviceWizard';
 
 const DEVICE_ICONS = {
   ac: Wind,
   fridge: Snowflake,
   tv: Tv,
   washingMachine: Disc,
-  fan: Fan
-};
-
-const DEVICE_NAMES = {
-  ac: "Air Conditioner",
-  fridge: "Refrigerator",
-  tv: "Smart TV",
-  washingMachine: "Washing Machine",
-  fan: "Ceiling Fan"
+  fan: Fan,
+  waterHeater: Flame,
+  microwave: Cpu,
+  other: Zap
 };
 
 export default function Dashboard() {
   const { homeownerData, liveData, toggleDevice } = useApp();
   const [isPowerSaverActive, setIsPowerSaverActive] = React.useState(false);
+  const [isWizardOpen, setIsWizardOpen] = React.useState(false);
 
   React.useEffect(() => {
     const checkStatus = () => {
@@ -31,6 +28,17 @@ export default function Dashboard() {
     const interval = setInterval(checkStatus, 500);
     return () => clearInterval(interval);
   }, []);
+
+  const defaultDevices = [
+    { id: 'ac', name: 'Air Conditioner', type: 'ac' },
+    { id: 'fridge', name: 'Refrigerator', type: 'fridge' },
+    { id: 'tv', name: 'Smart TV', type: 'tv' },
+    { id: 'washingMachine', name: 'Washing Machine', type: 'washingMachine' },
+    { id: 'fan', name: 'Ceiling Fan', type: 'fan' }
+  ];
+
+  const customDevices = homeownerData?.customDevices || [];
+  const allDevices = [...defaultDevices, ...customDevices];
 
   const handleDeactivatePowerSaver = async () => {
     playToggleOff();
@@ -78,6 +86,21 @@ export default function Dashboard() {
   return (
     <div className="space-y-5 pb-6">
       
+      {/* Dynamic Header with Add Device button */}
+      <div className="flex justify-between items-center">
+        <div>
+          <h2 className="text-lg font-extrabold text-slate-900 dark:text-slate-100">Household Devices</h2>
+          <p className="text-xs text-slate-500 dark:text-slate-400">Monitor and manage smart sockets</p>
+        </div>
+        <button
+          onClick={() => setIsWizardOpen(true)}
+          className="flex items-center space-x-1.5 px-3.5 py-2 rounded-xl bg-cyan-500 hover:bg-cyan-600 active:bg-cyan-700 text-[#070b13] font-bold text-xs shadow-lg shadow-cyan-500/20 cursor-pointer transition-all"
+        >
+          <Plus className="w-4 h-4 stroke-[3]" />
+          <span>Add Device</span>
+        </button>
+      </div>
+
       {/* Power Saver Active Banner */}
       {isPowerSaverActive && (
         <button
@@ -128,9 +151,10 @@ export default function Dashboard() {
 
       {/* Devices Grid */}
       <div className="grid grid-cols-1 gap-4">
-        {Object.keys(DEVICE_NAMES).map((deviceId) => {
-          const Icon = DEVICE_ICONS[deviceId] || Zap;
-          const name = DEVICE_NAMES[deviceId];
+        {allDevices.map((device) => {
+          const deviceId = device.id;
+          const Icon = DEVICE_ICONS[device.type] || Zap;
+          const name = device.name;
           const limit = limits[deviceId] || 100;
           const isOn = statuses[deviceId];
           const watts = isOn ? (liveData?.[deviceId] || 0) : 0;
@@ -169,7 +193,7 @@ export default function Dashboard() {
                   </div>
                   <div>
                     <h4 className="text-xs font-semibold text-slate-800 dark:text-slate-300">{name}</h4>
-                    <p className="text-[10px] text-slate-500">Limit: {limit}W</p>
+                    <p className="text-[10px] text-slate-500">Limit: {limit}W {device.room ? `• ${device.room}` : ''}</p>
                   </div>
                 </div>
 
@@ -231,6 +255,7 @@ export default function Dashboard() {
         })}
       </div>
 
+      <ConnectDeviceWizard isOpen={isWizardOpen} onClose={() => setIsWizardOpen(false)} />
     </div>
   );
 }

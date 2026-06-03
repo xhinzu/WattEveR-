@@ -5,7 +5,8 @@ import {
   getUserData, updateDeviceLimit, updateDeviceStatus, 
   updateUserBudget, flagHouseholdAnomaly, getAlerts, 
   getAllHouseholds, subscribeToLiveData, isMock,
-  getPaymentHistory, recordPayment, updateAlertsMuted
+  getPaymentHistory, recordPayment, updateAlertsMuted,
+  addConnectedDevice
 } from '../firebase';
 import { startSimulation } from '../simulator';
 
@@ -204,6 +205,11 @@ export const AppContextProvider = ({ children }) => {
     await updateAlertsMuted(currentUser.uid, isMuted);
   };
 
+  const addDevice = async (deviceDetails) => {
+    if (!currentUser) return;
+    await addConnectedDevice(currentUser.uid, deviceDetails);
+  };
+
   return (
     <AppContext.Provider value={{
       currentUser,
@@ -224,7 +230,8 @@ export const AppContextProvider = ({ children }) => {
       setBudget,
       toggleAnomaly,
       payBill,
-      toggleAlertsMuted
+      toggleAlertsMuted,
+      addDevice
     }}>
       {children}
     </AppContext.Provider>
