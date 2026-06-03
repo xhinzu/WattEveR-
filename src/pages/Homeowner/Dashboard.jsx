@@ -1,7 +1,7 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useApp } from '../../context/AppContext';
-import { Wind, Snowflake, Tv, Disc, Fan, AlertTriangle, ToggleLeft, ToggleRight, Zap, Plus, Flame, Cpu, MoreVertical, Trash2, Sliders, Sun, Moon } from 'lucide-react';
+import { Wind, Snowflake, Tv, Disc, Fan, AlertTriangle, ToggleLeft, ToggleRight, Zap, Plus, Flame, Cpu, MoreVertical, Trash2, Sliders } from 'lucide-react';
 import { playToggleOn, playToggleOff, playPaymentSuccess } from '../../utils/sounds';
 import ConnectDeviceWizard from '../../components/ConnectDeviceWizard';
 import { ResponsiveContainer, BarChart, Bar, XAxis, YAxis, Tooltip, Cell } from 'recharts';
@@ -25,15 +25,7 @@ export default function Dashboard() {
   const [deviceToDelete, setDeviceToDelete] = React.useState(null);
   const [showDeleteConfirm, setShowDeleteConfirm] = React.useState(false);
   const [showToast, setShowToast] = React.useState(null);
-  const [currentTime, setCurrentTime] = React.useState(new Date());
   const navigate = useNavigate();
-
-  React.useEffect(() => {
-    const timer = setInterval(() => {
-      setCurrentTime(new Date());
-    }, 1000);
-    return () => clearInterval(timer);
-  }, []);
 
   React.useEffect(() => {
     const handleClose = () => setActiveDropdown(null);
@@ -172,16 +164,6 @@ export default function Dashboard() {
       <div className="p-5 rounded-2xl bg-[#f3f4f6] dark:bg-gradient-to-br dark:from-slate-900 dark:to-slate-950 border border-slate-200 dark:border-white/5 shadow-lg relative overflow-hidden">
         {/* Glow */}
         <div className="absolute right-0 top-0 w-24 h-24 bg-cyan-500/10 rounded-full blur-2xl"></div>
-        
-        {/* Day/Night Time Indicator */}
-        <div className="absolute top-4 right-4 flex items-center space-x-1.5 px-2.5 py-1 rounded-full bg-white/60 dark:bg-slate-800/40 border border-slate-350/40 dark:border-slate-700/30 shadow-sm text-[10px] font-bold text-slate-655 dark:text-slate-300 select-none">
-          {isDay ? (
-            <Sun className="w-3.5 h-3.5 text-amber-550 animate-spin" style={{ animationDuration: '8s' }} />
-          ) : (
-            <Moon className="w-3.5 h-3.5 text-indigo-400 animate-pulse" />
-          )}
-          <span>{formattedTime}</span>
-        </div>
         
         <h3 className="text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider">Total Active Load</h3>
         <div className="mt-1 flex items-baseline space-x-2">
