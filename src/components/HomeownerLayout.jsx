@@ -1,8 +1,9 @@
-import React, { useEffect, useRef } from 'react';
+import { useEffect, useRef } from 'react';
 import { NavLink, Outlet, useNavigate } from 'react-router-dom';
 import { useApp } from '../context/AppContext';
 import { Zap, BarChart2, Sliders, Bell, Settings, LogOut, AlertTriangle } from 'lucide-react';
 import { playButtonClick, playAlert } from '../utils/sounds';
+import Chatbot from './Chatbot';
 
 export default function HomeownerLayout() {
   const { currentUser, homeownerData, liveData, alerts, logoutUser } = useApp();
@@ -171,6 +172,13 @@ export default function HomeownerLayout() {
           </NavLink>
           
         </nav>
+
+        {/* Floating Chatbot Overlay */}
+        <div className="fixed bottom-20 left-1/2 -translate-x-1/2 w-full max-w-md px-4 z-50 pointer-events-none">
+          <div className="pointer-events-auto float-left">
+            <Chatbot />
+          </div>
+        </div>
 
       </div>
     </div>
