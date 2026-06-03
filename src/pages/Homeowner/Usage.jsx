@@ -1,6 +1,20 @@
+/* eslint-disable react/prop-types */
 import { Link } from 'react-router-dom';
 import { useApp } from '../../context/AppContext';
 import { BarChart3, Wind, Snowflake, Tv, Disc, Fan, IndianRupee, Flame, Cpu, Zap } from 'lucide-react';
+import { ResponsiveContainer, PieChart, Pie, Cell, Tooltip } from 'recharts';
+
+const COLORS = [
+  'var(--accent-color, #00e5ff)',
+  '#1e90ff',
+  '#ff4757',
+  '#ffa502',
+  '#a55eea',
+  '#2ed573',
+  '#fd79a8',
+  '#eccc68',
+  '#70a1ff'
+];
 
 const DEVICE_ICONS = {
   ac: Wind,
@@ -14,7 +28,7 @@ const DEVICE_ICONS = {
 };
 
 export default function Usage() {
-  const { liveData, homeownerData } = useApp();
+  const { liveData, homeownerData, theme } = useApp();
 
   const totalKwh = liveData?.monthlyKwh || 0;
   const estimatedBill = Math.round(totalKwh * 6);
@@ -82,7 +96,127 @@ export default function Usage() {
         )}
       </div>
 
-      {/* Device Breakdown Header */}
+      {/* Donut Chart Card */}
+      <div className="p-4 rounded-xl bg-[#f3f4f6] dark:bg-slate-900/40 border border-slate-200 dark:border-white/5 flex flex-col items-center space-y-4">
+        <div className="relative w-full h-[180px] flex items-center justify-center">
+          <ResponsiveContainer width="100%" height="100%">
+            <PieChart>
+              <Pie
+                data={(() => {
+                  const chartData = allDevices.map((device) => {
+                    const kwh = deviceKwh[device.id] || 0;
+                    const percentOfTotal = totalKwh > 0 ? parseFloat(((kwh / totalKwh) * 100).toFixed(1)) : 0;
+                    return {
+                      name: device.name,
+                      value: kwh,
+                      percent: percentOfTotal,
+                      id: device.id
+                    };
+                  }).filter(item => item.value > 0);
+                  return chartData.length > 0 ? chartData : [{ name: 'No Usage', value: 1, percent: 0 }];
+                })()}
+                cx="50%"
+                cy="50%"
+                innerRadius={55}
+                outerRadius={75}
+                paddingAngle={3}
+                dataKey="value"
+              >
+                {(() => {
+                  const chartData = allDevices.map((device) => {
+                    const kwh = deviceKwh[device.id] || 0;
+                    const percentOfTotal = totalKwh > 0 ? parseFloat(((kwh / totalKwh) * 100).toFixed(1)) : 0;
+                    return {
+                      name: device.name,
+                      value: kwh,
+                      percent: percentOfTotal,
+                      id: device.id
+                    };
+                  }).filter(item => item.value > 0);
+                  const displayData = chartData.length > 0 ? chartData : [{ name: 'No Usage', value: 1, percent: 0 }];
+                  const hasConsumption = chartData.length > 0;
+                  return displayData.map((entry, index) => (
+                    <Cell 
+                      key={`cell-${index}`} 
+                      fill={hasConsumption ? COLORS[index % COLORS.length] : 'rgba(148, 163, 184, 0.2)'} 
+                    />
+                  ));
+                })()}
+              </Pie>
+              {(() => {
+                const chartData = allDevices.map((device) => {
+                  const kwh = deviceKwh[device.id] || 0;
+                  const percentOfTotal = totalKwh > 0 ? parseFloat(((kwh / totalKwh) * 100).toFixed(1)) : 0;
+                  return {
+                    name: device.name,
+                    value: kwh,
+                    percent: percentOfTotal,
+                    id: device.id
+                  };
+                }).filter(item => item.value > 0);
+                return chartData.length > 0 && (
+                  <Tooltip 
+                    formatter={(value, name, props) => [`${value} kWh (${props.payload.percent}%)`, name]}
+                    contentStyle={{ 
+                      backgroundColor: theme === 'dark' ? '#0b0f19' : '#ffffff', 
+                      border: '1px solid rgba(148, 163, 184, 0.2)', 
+                      borderRadius: '8px',
+                      color: theme === 'dark' ? '#f8fafc' : '#0f172a',
+                      fontSize: '11px',
+                      fontWeight: 'bold'
+                    }} 
+                  />
+                );
+              })()}
+            </PieChart>
+          </ResponsiveContainer>
+          
+          {/* Total kWh text in the center of the donut */}
+          <div className="absolute flex flex-col items-center justify-center text-center">
+            <span className="text-xl font-extrabold text-slate-800 dark:text-slate-100 leading-none">{totalKwh}</span>
+            <span className="text-[9px] text-slate-500 font-semibold uppercase tracking-wider mt-0.5">Total kWh</span>
+          </div>
+        </div>
+
+        {/* Legend Grid */}
+        <div className="w-full grid grid-cols-2 gap-2 pt-2 border-t border-slate-200 dark:border-white/5 text-[10px] font-bold text-slate-600 dark:text-slate-400">
+          {(() => {
+            const chartData = allDevices.map((device) => {
+              const kwh = deviceKwh[device.id] || 0;
+              const percentOfTotal = totalKwh > 0 ? parseFloat(((kwh / totalKwh) * 100).toFixed(1)) : 0;
+              return {
+                name: device.name,
+                value: kwh,
+                percent: percentOfTotal,
+                id: device.id
+              };
+            }).filter(item => item.value > 0);
+            return chartData.map((device, index) => (
+              <div key={device.id} className="flex items-center space-x-2">
+                <span 
+                  className="w-2.5 h-2.5 rounded-full shrink-0" 
+                  style={{ backgroundColor: COLORS[index % COLORS.length] }} 
+                />
+                <span className="truncate max-w-[90px]">{device.name}</span>
+                <span className="text-slate-400 dark:text-slate-550 font-normal">({device.percent}%)</span>
+              </div>
+            ));
+          })()}
+          {(() => {
+            const chartData = allDevices.map((device) => {
+              const kwh = deviceKwh[device.id] || 0;
+              return {
+                value: kwh
+              };
+            }).filter(item => item.value > 0);
+            return chartData.length === 0 && (
+              <div className="col-span-2 text-center text-slate-400 py-1 font-normal italic">
+                No consumption recorded yet this month.
+              </div>
+            );
+          })()}
+        </div>
+      </div>
       <h3 className="text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider">Consumption breakdown</h3>
 
       {/* Appliance usage cards */}

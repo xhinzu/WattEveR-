@@ -6,7 +6,7 @@ import {
   updateUserBudget, flagHouseholdAnomaly, getAlerts, 
   getAllHouseholds, subscribeToLiveData, isMock,
   getPaymentHistory, recordPayment, updateAlertsMuted,
-  addConnectedDevice
+  addConnectedDevice, clearAllAlerts, removeConnectedDevice
 } from '../firebase';
 import { startSimulation } from '../simulator';
 
@@ -21,6 +21,9 @@ export const AppContextProvider = ({ children }) => {
 
   // Theme color state
   const [themeColor, setThemeColor] = useState(() => localStorage.getItem('theme-color') || 'cyan');
+
+  // Simulated 7-day data state
+  const [simulated7DayData, setSimulated7DayData] = useState([]);
   
   // Homeowner specific state
   const [homeownerData, setHomeownerData] = useState(null);
@@ -46,6 +49,45 @@ export const AppContextProvider = ({ children }) => {
     document.documentElement.setAttribute('data-theme-color', themeColor);
     localStorage.setItem('theme-color', themeColor);
   }, [themeColor]);
+
+  // Generate stable 7-day data when user changes
+  useEffect(() => {
+    if (!currentUser || currentUser.role === 'worker') {
+      setSimulated7DayData([]);
+      return;
+    }
+    const dataKey = `simulated_7day_${currentUser.uid}`;
+    let savedData = localStorage.getItem(dataKey);
+    if (!savedData) {
+      const days = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+      const result = [];
+      const today = new Date();
+      for (let i = 6; i >= 0; i--) {
+        const d = new Date(today);
+        d.setDate(today.getDate() - i);
+        const dayName = days[d.getDay()];
+        const isToday = i === 0;
+        const val = parseFloat((8 + Math.random() * 10).toFixed(1));
+        result.push({
+          day: dayName,
+          kwh: val,
+          isToday
+        });
+      }
+      localStorage.setItem(dataKey, JSON.stringify(result));
+      setSimulated7DayData(result);
+    } else {
+      const parsed = JSON.parse(savedData);
+      const updated = parsed.map((item, idx) => {
+        const isLast = idx === parsed.length - 1;
+        return {
+          ...item,
+          isToday: isLast
+        };
+      });
+      setSimulated7DayData(updated);
+    }
+  }, [currentUser]);
 
   // Sync alerts muted preference to localStorage for instant lookup
   useEffect(() => {
@@ -219,6 +261,16 @@ export const AppContextProvider = ({ children }) => {
     await addConnectedDevice(currentUser.uid, deviceDetails);
   };
 
+  const clearAlerts = async () => {
+    if (!currentUser) return;
+    await clearAllAlerts(currentUser.uid);
+  };
+
+  const removeDevice = async (deviceId) => {
+    if (!currentUser) return;
+    await removeConnectedDevice(currentUser.uid, deviceId);
+  };
+
   return (
     <AppContext.Provider value={{
       currentUser,
@@ -233,6 +285,9 @@ export const AppContextProvider = ({ children }) => {
       toggleTheme,
       themeColor,
       setThemeColor,
+      simulated7DayData,
+      clearAlerts,
+      removeDevice,
       loginUser,
       logoutUser,
       registerUser,

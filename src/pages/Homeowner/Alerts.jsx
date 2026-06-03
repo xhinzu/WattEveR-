@@ -1,9 +1,11 @@
+import { useState } from 'react';
 import { useApp } from '../../context/AppContext';
-import { Bell, AlertTriangle, IndianRupee, ShieldCheck, Clock } from 'lucide-react';
+import { Bell, AlertTriangle, IndianRupee, ShieldCheck, Clock, Trash2 } from 'lucide-react';
 import { playButtonClick } from '../../utils/sounds';
 
 export default function Alerts() {
-  const { alerts, homeownerData, toggleAlertsMuted } = useApp();
+  const { alerts, homeownerData, toggleAlertsMuted, clearAlerts } = useApp();
+  const [showClearConfirm, setShowClearConfirm] = useState(false);
   const isMuted = homeownerData?.alertsMuted || false;
 
   const handleToggleMute = async () => {
@@ -35,11 +37,22 @@ export default function Alerts() {
           <p className="text-xs text-slate-500 dark:text-slate-400">Real-time load and budget warnings</p>
         </div>
 
-        {alerts.length > 0 && (
-          <span className="text-[10px] bg-rose-50 dark:bg-rose-500/10 border border-rose-200 dark:border-rose-500/35 text-rose-600 dark:text-rose-400 px-2.5 py-0.5 rounded-full font-bold animate-pulse">
-            {alerts.length} Active
-          </span>
-        )}
+        <div className="flex items-center space-x-2">
+          {alerts.length > 0 && (
+            <>
+              <button
+                type="button"
+                onClick={() => { playButtonClick(); setShowClearConfirm(true); }}
+                className="text-[10px] border border-rose-500/40 hover:border-rose-500 text-rose-550 hover:bg-rose-500/10 px-2.5 py-1 rounded-lg font-bold transition-all cursor-pointer"
+              >
+                Clear All
+              </button>
+              <span className="text-[10px] bg-rose-50 dark:bg-rose-500/10 border border-rose-200 dark:border-rose-500/35 text-rose-600 dark:text-rose-400 px-2.5 py-0.5 rounded-full font-bold animate-pulse">
+                {alerts.length} Active
+              </span>
+            </>
+          )}
+        </div>
       </div>
 
       {/* Mute Control Row */}
@@ -80,8 +93,8 @@ export default function Alerts() {
             <ShieldCheck className="w-6 h-6" />
           </div>
           <div>
-            <h3 className="text-sm font-bold text-slate-800 dark:text-slate-200">Grid Status Stable</h3>
-            <p className="text-xs text-slate-500 dark:text-slate-400 mt-1">All appliances are operating within limits, and your bill projections match your budget.</p>
+            <h3 className="text-sm font-bold text-slate-800 dark:text-slate-200">No alerts</h3>
+            <p className="text-xs text-slate-500 dark:text-slate-400 mt-1">All devices within limits.</p>
           </div>
         </div>
       ) : (
@@ -143,6 +156,48 @@ export default function Alerts() {
         </div>
       )}
 
+      {/* Clear Alerts Confirmation Modal */}
+      {showClearConfirm && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+          {/* Backdrop */}
+          <div 
+            className="absolute inset-0 bg-[#070b13]/80 backdrop-blur-sm"
+            onClick={() => setShowClearConfirm(false)}
+          />
+          {/* Dialog */}
+          <div className="relative bg-white dark:bg-[#0b0f19] border border-slate-200 dark:border-white/10 p-5 rounded-2xl max-w-xs w-full text-center space-y-4 shadow-2xl">
+            <div className="w-12 h-12 rounded-full bg-rose-50 dark:bg-rose-500/10 border border-rose-200 dark:border-rose-500/35 flex items-center justify-center text-rose-550 mx-auto">
+              <Trash2 className="w-5 h-5 text-rose-500" />
+            </div>
+            <div className="space-y-1">
+              <h4 className="text-sm font-bold text-slate-800 dark:text-slate-200">Clear All Alerts?</h4>
+              <p className="text-xs text-slate-550 dark:text-slate-400">
+                Are you sure you want to clear all alerts? This cannot be undone.
+              </p>
+            </div>
+            <div className="flex space-x-2.5">
+              <button
+                type="button"
+                onClick={() => { playButtonClick(); setShowClearConfirm(false); }}
+                className="flex-1 py-2 rounded-xl bg-slate-100 hover:bg-slate-200 dark:bg-slate-900 dark:hover:bg-slate-800 border border-slate-200 dark:border-white/5 text-slate-600 dark:text-slate-350 transition cursor-pointer text-xs font-semibold"
+              >
+                Cancel
+              </button>
+              <button
+                type="button"
+                onClick={async () => {
+                  playButtonClick();
+                  await clearAlerts();
+                  setShowClearConfirm(false);
+                }}
+                className="flex-1 py-2 rounded-xl bg-rose-500 hover:bg-rose-600 text-white shadow-md shadow-rose-500/10 transition cursor-pointer text-xs font-bold"
+              >
+                Clear All
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

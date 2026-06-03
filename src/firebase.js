@@ -1,6 +1,6 @@
 import { initializeApp, getApps } from 'firebase/app';
 import { getAuth, signInWithEmailAndPassword, signOut, onAuthStateChanged, createUserWithEmailAndPassword } from 'firebase/auth';
-import { getFirestore, doc, setDoc, getDoc, updateDoc, collection, addDoc, onSnapshot, query, where } from 'firebase/firestore';
+import { getFirestore, doc, setDoc, getDoc, updateDoc, collection, addDoc, onSnapshot, query, where, writeBatch, getDocs, deleteField } from 'firebase/firestore';
 import { getDatabase, ref, onValue, set, update } from 'firebase/database';
 
 // Firebase environment configuration check
@@ -705,5 +705,99 @@ export const submitOutageReport = async (email, issueType, description) => {
   }
 
   return reportId;
+};
+
+export const clearAllAlerts = async (uid) => {
+  if (isMock) {
+    mockAlerts = mockAlerts.filter(a => a.userId !== uid);
+    setStorageItem("mock_alerts", mockAlerts);
+    triggerListeners("alerts", uid);
+  } else {
+    const q = query(collection(db, `users/${uid}/alerts`));
+    const snapshot = await getDocs(q);
+    const batch = writeBatch(db);
+    snapshot.docs.forEach((docSnap) => {
+      batch.delete(docSnap.ref);
+    });
+    await batch.commit();
+  }
+};
+
+export const removeConnectedDevice = async (uid, deviceId) => {
+  if (isMock) {
+    if (mockUsers[uid]) {
+      // 1. Remove from customDevices array
+      if (mockUsers[uid].customDevices) {
+        mockUsers[uid].customDevices = mockUsers[uid].customDevices.filter(d => d.id !== deviceId);
+      }
+      // 2. Remove from deviceLimits
+      if (mockUsers[uid].deviceLimits) {
+        delete mockUsers[uid].deviceLimits[deviceId];
+      }
+      // 3. Remove from deviceStatuses
+      if (mockUsers[uid].deviceStatuses) {
+        delete mockUsers[uid].deviceStatuses[deviceId];
+      }
+      setStorageItem("mock_users", mockUsers);
+      triggerListeners("users", uid);
+
+      // 4. Remove from liveData and deviceKwh
+      if (mockLiveData[uid]) {
+        delete mockLiveData[uid][deviceId];
+        if (mockLiveData[uid].deviceKwh) {
+          delete mockLiveData[uid].deviceKwh[deviceId];
+        }
+        
+        // Recalculate totalWatts
+        let sum = 0;
+        const defaultDevices = ["ac", "fridge", "tv", "washingMachine", "fan"];
+        defaultDevices.forEach(d => {
+          sum += mockLiveData[uid][d] || 0;
+        });
+        if (mockUsers[uid].customDevices) {
+          mockUsers[uid].customDevices.forEach(d => {
+            sum += mockLiveData[uid][d.id] || 0;
+          });
+        }
+        mockLiveData[uid].totalWatts = sum;
+        setStorageItem("mock_live_data", mockLiveData);
+        triggerListeners("liveData", uid);
+      }
+
+      // 5. Remove any associated alerts
+      mockAlerts = mockAlerts.filter(a => !(a.userId === uid && a.deviceId === deviceId));
+      setStorageItem("mock_alerts", mockAlerts);
+      triggerListeners("alerts", uid);
+    }
+  } else {
+    const userRef = doc(db, "users", uid);
+    const userDoc = await getDoc(userRef);
+    if (userDoc.exists()) {
+      const userData = userDoc.data();
+      const customDevices = userData.customDevices || [];
+      const updatedDevices = customDevices.filter(d => d.id !== deviceId);
+
+      await updateDoc(userRef, {
+        customDevices: updatedDevices,
+        [`deviceLimits.${deviceId}`]: deleteField(),
+        [`deviceStatuses.${deviceId}`]: deleteField()
+      });
+
+      // Remove from RTDB live data
+      const liveRef = ref(rtdb, `households/${uid}/live/${deviceId}`);
+      const liveKwhRef = ref(rtdb, `households/${uid}/live/deviceKwh/${deviceId}`);
+      await set(liveRef, null);
+      await set(liveKwhRef, null);
+
+      // Delete associated alerts from Firestore
+      const q = query(collection(db, `users/${uid}/alerts`), where("deviceId", "==", deviceId));
+      const snapshot = await getDocs(q);
+      const batch = writeBatch(db);
+      snapshot.docs.forEach((docSnap) => {
+        batch.delete(docSnap.ref);
+      });
+      await batch.commit();
+    }
+  }
 };
 
