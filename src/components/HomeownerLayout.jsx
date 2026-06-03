@@ -175,7 +175,7 @@ export default function HomeownerLayout() {
 
         {/* Floating Chatbot Overlay */}
         <div className="fixed bottom-20 left-1/2 -translate-x-1/2 w-full max-w-md px-4 z-50 pointer-events-none">
-          <div className="pointer-events-auto float-left">
+          <div className="pointer-events-auto float-right">
             <Chatbot />
           </div>
         </div>
