@@ -2,7 +2,7 @@ import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useApp } from '../../context/AppContext';
 import { Wind, Snowflake, Tv, Disc, Fan, AlertTriangle, ToggleLeft, ToggleRight, Zap, Plus, Flame, Cpu, MoreVertical, Trash2, Sliders } from 'lucide-react';
-import { playToggleOn, playToggleOff } from '../../utils/sounds';
+import { playToggleOn, playToggleOff, playPaymentSuccess } from '../../utils/sounds';
 import ConnectDeviceWizard from '../../components/ConnectDeviceWizard';
 import { ResponsiveContainer, BarChart, Bar, XAxis, YAxis, Tooltip, Cell } from 'recharts';
 
@@ -18,7 +18,7 @@ const DEVICE_ICONS = {
 };
 
 export default function Dashboard() {
-  const { homeownerData, liveData, toggleDevice, theme, simulated7DayData, removeDevice } = useApp();
+  const { homeownerData, liveData, toggleDevice, theme, simulated7DayData, removeDevice, killSwitchActive, restoreAllDevices } = useApp();
   const [isPowerSaverActive, setIsPowerSaverActive] = React.useState(false);
   const [isWizardOpen, setIsWizardOpen] = React.useState(false);
   const [activeDropdown, setActiveDropdown] = React.useState(null);
@@ -124,6 +124,26 @@ export default function Dashboard() {
           <span>Add Device</span>
         </button>
       </div>
+
+      {/* Kill Switch Active Banner */}
+      {killSwitchActive && (
+        <div className="w-full p-3 py-2.5 rounded-xl bg-red-500/10 border border-red-500/25 flex items-center justify-between text-red-650 dark:text-red-400 text-xs font-bold transition duration-200 shadow-sm animate-pulse">
+          <div className="flex items-center space-x-2">
+            <span className="text-sm">⚠</span>
+            <span>Kill Switch Active — All devices turned off</span>
+          </div>
+          <button
+            type="button"
+            onClick={() => {
+              playPaymentSuccess();
+              restoreAllDevices();
+            }}
+            className="text-[10px] font-bold bg-red-500 hover:bg-red-600 text-white px-2.5 py-1 rounded-lg shadow-md transition cursor-pointer"
+          >
+            Restore All
+          </button>
+        </div>
+      )}
 
       {/* Power Saver Active Banner */}
       {isPowerSaverActive && (

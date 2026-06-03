@@ -1,9 +1,11 @@
 /* eslint-disable react/prop-types */
 import { useState, useEffect, useRef } from 'react';
-import { MessageSquare, Zap, Leaf } from 'lucide-react';
+import { MessageSquare, Zap, Leaf, Sun, Power } from 'lucide-react';
 import { playButtonClick } from '../utils/sounds';
+import { useApp } from '../context/AppContext';
 
 export default function ExpandableFAB({ onSelect }) {
+  const { killSwitchActive } = useApp();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isReportActive, setIsReportActive] = useState(false);
   const [isPowerSaverActive, setIsPowerSaverActive] = useState(false);
@@ -62,11 +64,11 @@ export default function ExpandableFAB({ onSelect }) {
 
   const menuItems = [
     {
-      id: 'chatbot',
-      label: 'Assistant',
-      icon: MessageSquare,
-      colorClass: 'bg-cyan-500 hover:bg-cyan-600 shadow-cyan-500/20 text-white',
-      target: 'chatbot'
+      id: 'solar',
+      label: 'Solar',
+      icon: Sun,
+      colorClass: 'bg-amber-500 hover:bg-amber-600 shadow-amber-500/20 text-white',
+      target: 'solar'
     },
     {
       id: 'powersaver',
@@ -77,10 +79,25 @@ export default function ExpandableFAB({ onSelect }) {
       badge: isPowerSaverActive ? 'Active' : null
     },
     {
+      id: 'chatbot',
+      label: 'Assistant',
+      icon: MessageSquare,
+      colorClass: 'bg-cyan-500 hover:bg-cyan-600 shadow-cyan-500/20 text-white',
+      target: 'chatbot'
+    },
+    {
+      id: 'killswitch',
+      label: 'Kill Switch',
+      icon: Power,
+      colorClass: `bg-red-500 hover:bg-red-650 shadow-red-500/20 text-white ${killSwitchActive ? 'animate-emergency-pulse' : ''}`,
+      target: 'killswitch',
+      badge: killSwitchActive ? 'Active' : '!'
+    },
+    {
       id: 'emergency',
       label: 'Emergency',
       icon: Zap,
-      colorClass: 'bg-red-500 hover:bg-red-600 shadow-red-500/20 text-white',
+      colorClass: 'bg-orange-500 hover:bg-orange-600 shadow-orange-500/20 text-white',
       target: 'emergency',
       badge: isReportActive ? 'Report Active' : null
     }
@@ -117,7 +134,7 @@ export default function ExpandableFAB({ onSelect }) {
                     transitionDelay: isMenuOpen ? `${index * 75 + 150}ms` : '0ms',
                   }}
                   className={`text-white text-[9px] font-bold px-2 py-0.5 rounded-full shadow-md animate-pulse pointer-events-auto ${
-                    item.id === 'powersaver' ? 'bg-[#00b894]' : 'bg-red-600'
+                    item.id === 'powersaver' ? 'bg-[#00b894]' : item.id === 'solar' ? 'bg-amber-500' : 'bg-red-600'
                   }`}
                 >
                   {item.badge}
@@ -158,10 +175,12 @@ export default function ExpandableFAB({ onSelect }) {
       <button
         type="button"
         onClick={handleMainClick}
-        className={`w-12 h-12 rounded-full bg-transparent border flex items-center justify-center transition-all duration-300 transform hover:scale-105 active:scale-95 cursor-pointer z-40 relative pointer-events-auto animate-chatbot-pulse ${
-          isPowerSaverActive
-            ? 'border-[#00b894] text-[#00b894] hover:bg-[#00b894]/10 shadow-[#00b894]/5'
-            : 'border-cyan-500/40 dark:border-cyan-400/30 text-cyan-600 dark:text-cyan-400 hover:bg-cyan-500/10 dark:hover:bg-cyan-400/10 shadow-md shadow-cyan-500/5'
+        className={`w-12 h-12 rounded-full bg-transparent border flex items-center justify-center transition-all duration-300 transform hover:scale-105 active:scale-95 cursor-pointer z-40 relative pointer-events-auto ${
+          killSwitchActive
+            ? 'animate-emergency-pulse border-red-500 text-red-500 hover:bg-red-500/10 shadow-md shadow-red-500/10'
+            : isPowerSaverActive
+              ? 'animate-chatbot-pulse border-[#00b894] text-[#00b894] hover:bg-[#00b894]/10 shadow-[#00b894]/5'
+              : 'animate-chatbot-pulse border-cyan-500/40 dark:border-cyan-400/30 text-cyan-600 dark:text-cyan-400 hover:bg-cyan-500/10 dark:hover:bg-cyan-400/10 shadow-md shadow-cyan-500/5'
         }`}
         title="Support & Services"
       >

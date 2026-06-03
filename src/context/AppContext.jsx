@@ -6,7 +6,8 @@ import {
   updateUserBudget, flagHouseholdAnomaly, getAlerts, 
   getAllHouseholds, subscribeToLiveData, isMock,
   getPaymentHistory, recordPayment, updateAlertsMuted,
-  addConnectedDevice, clearAllAlerts, removeConnectedDevice
+  addConnectedDevice, clearAllAlerts, removeConnectedDevice,
+  activateKillSwitch, restoreDevices
 } from '../firebase';
 import { startSimulation } from '../simulator';
 
@@ -24,6 +25,9 @@ export const AppContextProvider = ({ children }) => {
 
   // Simulated 7-day data state
   const [simulated7DayData, setSimulated7DayData] = useState([]);
+
+  // Kill Switch state
+  const [killSwitchActive, setKillSwitchActive] = useState(false);
   
   // Homeowner specific state
   const [homeownerData, setHomeownerData] = useState(null);
@@ -86,6 +90,15 @@ export const AppContextProvider = ({ children }) => {
         };
       });
       setSimulated7DayData(updated);
+    }
+  }, [currentUser]);
+
+  // Sync killSwitchActive from localStorage when user changes
+  useEffect(() => {
+    if (currentUser) {
+      setKillSwitchActive(localStorage.getItem(`kill_switch_active_${currentUser.uid}`) === 'true');
+    } else {
+      setKillSwitchActive(false);
     }
   }, [currentUser]);
 
@@ -271,6 +284,18 @@ export const AppContextProvider = ({ children }) => {
     await removeConnectedDevice(currentUser.uid, deviceId);
   };
 
+  const triggerKillSwitch = async () => {
+    if (!currentUser) return;
+    await activateKillSwitch(currentUser.uid);
+    setKillSwitchActive(true);
+  };
+
+  const restoreAllDevices = async () => {
+    if (!currentUser) return;
+    await restoreDevices(currentUser.uid);
+    setKillSwitchActive(false);
+  };
+
   return (
     <AppContext.Provider value={{
       currentUser,
@@ -288,6 +313,9 @@ export const AppContextProvider = ({ children }) => {
       simulated7DayData,
       clearAlerts,
       removeDevice,
+      killSwitchActive,
+      triggerKillSwitch,
+      restoreAllDevices,
       loginUser,
       logoutUser,
       registerUser,

@@ -801,3 +801,97 @@ export const removeConnectedDevice = async (uid, deviceId) => {
   }
 };
 
+export const activateKillSwitch = async (uid) => {
+  if (isMock) {
+    if (mockUsers[uid]) {
+      const prevStatuses = { ...mockUsers[uid].deviceStatuses };
+      setStorageItem(`kill_switch_prev_states_${uid}`, prevStatuses);
+      localStorage.setItem(`kill_switch_active_${uid}`, 'true');
+
+      // Turn off everything except fridge
+      Object.keys(mockUsers[uid].deviceStatuses).forEach(key => {
+        if (key !== 'fridge') {
+          mockUsers[uid].deviceStatuses[key] = false;
+        }
+      });
+      setStorageItem("mock_users", mockUsers);
+      triggerListeners("users", uid);
+
+      // Instantly drop power in live data for turned off devices
+      if (mockLiveData[uid]) {
+        Object.keys(mockUsers[uid].deviceStatuses).forEach(key => {
+          if (key !== 'fridge') {
+            mockLiveData[uid][key] = 0;
+          }
+        });
+        // Recalculate totalWatts
+        let sum = 0;
+        const defaultDevices = ["ac", "fridge", "tv", "washingMachine", "fan"];
+        defaultDevices.forEach(d => {
+          sum += mockLiveData[uid][d] || 0;
+        });
+        if (mockUsers[uid].customDevices) {
+          mockUsers[uid].customDevices.forEach(d => {
+            sum += mockLiveData[uid][d.id] || 0;
+          });
+        }
+        mockLiveData[uid].totalWatts = sum;
+        setStorageItem("mock_live_data", mockLiveData);
+        triggerListeners("liveData", uid);
+      }
+    }
+  } else {
+    // Real Firebase
+    const userRef = doc(db, "users", uid);
+    const userDoc = await getDoc(userRef);
+    if (userDoc.exists()) {
+      const userData = userDoc.data();
+      const prevStatuses = { ...userData.deviceStatuses };
+      setStorageItem(`kill_switch_prev_states_${uid}`, prevStatuses);
+      localStorage.setItem(`kill_switch_active_${uid}`, 'true');
+
+      const updatedStatuses = { ...userData.deviceStatuses };
+      Object.keys(updatedStatuses).forEach(key => {
+        if (key !== 'fridge') {
+          updatedStatuses[key] = false;
+        }
+      });
+
+      await updateDoc(userRef, {
+        deviceStatuses: updatedStatuses
+      });
+
+      // Also set turned off device wattages in RTDB to 0
+      const updates = {};
+      Object.keys(updatedStatuses).forEach(key => {
+        if (key !== 'fridge') {
+          updates[`households/${uid}/live/${key}`] = 0;
+        }
+      });
+      await update(ref(rtdb), updates);
+    }
+  }
+};
+
+export const restoreDevices = async (uid) => {
+  const prevStatesStr = localStorage.getItem(`kill_switch_prev_states_${uid}`);
+  if (!prevStatesStr) return;
+  const prevStatuses = JSON.parse(prevStatesStr);
+  localStorage.removeItem(`kill_switch_active_${uid}`);
+  localStorage.removeItem(`kill_switch_prev_states_${uid}`);
+
+  if (isMock) {
+    if (mockUsers[uid]) {
+      mockUsers[uid].deviceStatuses = prevStatuses;
+      setStorageItem("mock_users", mockUsers);
+      triggerListeners("users", uid);
+    }
+  } else {
+    // Real Firebase
+    const userRef = doc(db, "users", uid);
+    await updateDoc(userRef, {
+      deviceStatuses: prevStatuses
+    });
+  }
+};
+
